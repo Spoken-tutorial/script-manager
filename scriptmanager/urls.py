@@ -9,10 +9,10 @@ from . import views
 # schema_view = get_swagger_view(title='Spoken Tutorial\'s API')
 
 urlpatterns = [
-  url(r'api/foss/(?P<fid>[0-9]+)/language/(?P<lid>[0-9]+)/tutorials/$', views.TutorialDetailList.as_view()), 
-  url(r'api/foss/$', views.ContributorRoleList.as_view()), 
-  url(r'api/tutorial/(?P<tid>[0-9]+)/language/(?P<lid>[0-9]+)/scripts/(?P<vid>[0-9]+)/$', views.ScriptCreateAPIView.as_view()),
-  url(r'api/tutorial/(?P<tid>[0-9]+)/language/(?P<lid>[0-9]+)/scripts/(?P<vid>[0-9]+)/(?P<script_detail_id>[0-9]+)/$', views.ScriptDetailAPIView.as_view()),
+  url(r'api/foss/(?P<fid>[0-9]+)/language/(?P<lid>[0-9]+)/tutorials/(?P<domain>[\w\-]+)/$', views.TutorialDetailList.as_view()), 
+  url(r'api/foss/$', views.FossLanguageList.as_view()), 
+  url(r'api/foss/(?P<fid>[0-9]+)/tutorial/(?P<tid>[0-9]+)/language/(?P<lid>[0-9]+)/scripts/(?P<vid>[0-9]+)/(?P<domain>[\w\-]+)/$', views.ScriptCreateAPIView.as_view()),
+  url(r'api/scripts/(?P<script_detail_id>[0-9]+)/$', views.ScriptDetailAPIView.as_view()),
   url(r'api/scripts/(?P<script_detail_id>[0-9]+)/comments/$', views.CommentCreateAPIView.as_view()),
   url(r'api/scripts/(?P<script_detail_id>[0-9]+)/reversions/$', views.ReversionListView.as_view()),
   url(r'api/scripts/(?P<script_detail_id>[0-9]+)/reversions/(?P<reversion_id>[0-9]+)/$', views.ReversionRevertView.as_view()),
@@ -23,3 +23,5 @@ urlpatterns = [
   # url(r'api/docs/$', schema_view),
   url(r'', views.index, name='home')
 ]
+
+app_name = 'scriptmanager'

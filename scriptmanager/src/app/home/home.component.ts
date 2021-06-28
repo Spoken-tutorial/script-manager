@@ -9,9 +9,13 @@ import { AuthService } from '../_service/auth.service';
   styleUrls: ['./home.component.sass']
 })
 export class HomeComponent implements OnInit {
-
+  public sourceData;
+  public domainCategories = ['spokentutorials', 'healthnutrition'];
+  public currentDomainCategory : string ='';
   public fossCategories;
-  public currentCategoryLanguages;
+  public currentFossCategory = -1;
+  public languages;
+  public currentLanguage = -1;
   public tutorials;
   public description: string = '';
   
@@ -21,73 +25,38 @@ export class HomeComponent implements OnInit {
     public authService: AuthService
   ) { }
 
-  private getFossCategoryIndex() {
-    const fossId = +this.fossService.currentFossCategory;
-    
-    for (var i = 0; i < this.fossCategories.length; i++) {
-      const fid = this.fossCategories[i]['foss_category']['id'];
 
-      if (fid === fossId) return i;
-    }
-
-    return -1;
-  }
-
-  private getFossCategoryLanguageIndex() {
-    const languageId = +this.fossService.currentFossCategoryLanguage;
-    
-    for (var i = 0; i < this.currentCategoryLanguages.length; i++) {
-      const lid = this.currentCategoryLanguages[i]['id'];
-
-      if (lid === languageId) return i;
-    }
-
-    return -1;
+  public onDomainCategoryChange(name){
+    this.currentDomainCategory = name
+    this.fossCategories = this.sourceData[name]['foss']
+    this.currentFossCategory = -1
+    this.currentLanguage = -1
+    this.description =''
   }
 
   public onFossCategoryChange(fid) {
-    this.fossService.currentFossCategory = fid;
-    const index = this.getFossCategoryIndex();
-
-    this.tutorials = [];
-    this.fossService.currentFossCategoryLanguage = -1;
-    this.description = '';
-    this.currentCategoryLanguages = [];
-
-    if (index !== -1) {
-      this.description = this.fossCategories[index]['foss_category']['description'];
-      this.currentCategoryLanguages = this.fossCategories[index]['languages'];
+    this.currentFossCategory = fid;
+    this.languages = this.sourceData[this.currentDomainCategory]['language']
+    for(let i=0; i < this.fossCategories.length; i++){
+      if (this.fossCategories[i]['id'] == fid){
+        this.description = this.fossCategories[i]['description'];
+        break;
+      }
     }
 
   }
 
   public onLanguageChange(lid) {
-    this.fossService.currentFossCategoryLanguage = lid;
-    const index = this.getFossCategoryLanguageIndex();
-
-    if (index !== -1) {
-      const fossId = this.fossService.currentFossCategory;
-      const languageId = this.fossService.currentFossCategoryLanguage;
-      
-      this.fetchTutorials(fossId, languageId);
-    } else {
-      this.tutorials = [];
-      this.description = '';
+    if(this.currentFossCategory != -1 && lid != -1){
+    this.currentLanguage = lid;
+    this.fetchTutorials(this.currentDomainCategory,this.currentFossCategory,this.currentLanguage);
     }
   }
 
   public fetchAllFoss() {
     this.fossService.getAllFossCategories().subscribe(
       (res) => {
-        this.fossCategories = res['data'];
-
-        const fossId = this.fossService.currentFossCategory;
-        const languageId = this.fossService.currentFossCategoryLanguage;
-    
-        if (fossId !== -1 && languageId !== -1) {
-          this.onFossCategoryChange(fossId);
-          this.onLanguageChange(languageId);
-        }
+        this.sourceData = res['data'];
       },
       (err) => {
         console.log('Failed to fetch foss categories');
@@ -96,9 +65,9 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  public fetchTutorials(fossId, languageId) {
-    this.tutorialService.getFossTutorials(fossId, languageId).subscribe(
-      (res) => this.tutorials = res,
+  public fetchTutorials(domain,fossId, languageId) {
+    this.tutorialService.getFossTutorials(domain, fossId, languageId).subscribe(
+      (res) => this.tutorials = res['data']['tutorials'],
       console.error
     );
   }

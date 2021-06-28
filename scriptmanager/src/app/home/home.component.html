@@ -28,10 +28,20 @@
     <div class="columns is-centered has-text-centered" *ngIf="authService.isAuthenticated()">
       <div class="column">
         <div class="select">
-          <select [(ngModel)]="fossService.currentFossCategory" (change)="onFossCategoryChange($event.target.value)">
+          <select [(ngModel)]="currentDomainCategory" (change)="onDomainCategoryChange($event.target.value)">
+            <option value="">Select Domain Category</option>
+            <option *ngFor="let domain of domainCategories; let i = index" [value]="domain">
+              {{domain}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="column">
+        <div class="select">
+          <select [(ngModel)]="currentFossCategory" (change)="onFossCategoryChange($event.target.value)">
             <option value="-1">Select Foss Category</option>
-            <option *ngFor="let category of fossCategories; let i = index" [value]="category['foss_category']['id']">
-              {{category['foss_category']['name']}}
+            <option *ngFor="let foss of fossCategories; let i = index" [value]="foss['id']">
+              {{foss['foss']}}
             </option>
           </select>
         </div>
@@ -39,9 +49,9 @@
       <div class="column">
         <div class="select">
           <select (change)="onLanguageChange($event.target.value)"
-            [(ngModel)]="fossService.currentFossCategoryLanguage">
+            [(ngModel)]="currentLanguage">
             <option value="-1">Select Language</option>
-            <option *ngFor="let language of currentCategoryLanguages; let i = index" [value]="language['id']">
+            <option *ngFor="let language of languages; let i = index" [value]="language['id']">
               {{language['name']}}
             </option>
           </select>

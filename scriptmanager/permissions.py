@@ -1,55 +1,62 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from creation.views import is_domainreviewer, is_qualityreviewer
-from creation.models import TutorialDetail, ContributorRole, DomainReviewerRole, QualityReviewerRole
+from .utils import get_roles
+from .models import ScriptDetail
 
 class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
-  def has_object_permission(self, request, view, obj):
-    user = request.user
-    tutorialdetails = getFOSS(obj.tutorial)    
-    
-    if (obj.status): return True
-
-    if (not user.is_anonymous() and (isDomainReviewer(tutorialdetails, obj.language, user) or isQualityReviewer(tutorialdetails, obj.language, user) or isContributor(tutorialdetails, obj.language, user))):
-      return True
-    
+  def has_permission(self, request, view):
+    if request.user.is_authenticated:
+      domain = self.kwargs['domain']
+      fid = self.kwargs['fid']
+      lid = self.kwargs['lid']
+      tid = self.kwargs['tid']
+      return  is_Contributor(domain, fid, lid, tid) or is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
     return False
+    
+  def has_object_permission(self, request, view, obj):
+    obj.user == request.user
 
 class ScriptModifyPermission(IsAuthenticatedOrReadOnly):
-  def has_object_permission(self, request, view, obj):
-    user = request.user
-    tutorialdetails = getFOSS(obj.script.tutorial)
-    
-    if (user.is_anonymous() or obj.script.status): return False
-
-    return (isDomainReviewer(tutorialdetails, obj.script.language, user) or isQualityReviewer(tutorialdetails, obj.script.language, user) or isContributor(tutorialdetails, obj.script.language, user))
+  def has_permission(self, request, view):
+    if request.user.is_authenticated:
+      domain = self.kwargs['domain']
+      fid = self.kwargs['fid']
+      lid = self.kwargs['lid']
+      tid = self.kwargs['tid']
+      return  is_Contributor(domain, fid, lid, tid) or is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
+    return False
       
 class PublishedScriptPermission(IsAuthenticatedOrReadOnly):
+    
   def has_object_permission(self, request, view, obj):
-    user = request.user
-
-    if (user.is_anonymous()): return False
-
-    return is_domainreviewer(user) or is_qualityreviewer(user) or obj.user == user
-
+    if request.user.is_authenticated:
+      domain = self.kwargs['domain']
+      fid = self.kwargs['fid']
+      lid = self.kwargs['lid']
+      tid = self.kwargs['tid']
+      return  is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
+    return False
+  
 class ReviewScriptPermission(IsAuthenticatedOrReadOnly):
   def has_object_permission(self, request, view, obj):
-    user = request.user
-    tutorialdetails = getFOSS(obj.tutorial)    
-
-    if (user.is_anonymous()): return False
-
-    return isDomainReviewer(tutorialdetails, obj.language, user) or isQualityReviewer(tutorialdetails, obj.language, user)
+    if request.user.is_authenticated:
+      domain = self.kwargs['domain']
+      fid = self.kwargs['fid']
+      lid = self.kwargs['lid']
+      tid = self.kwargs['tid']
+      return  is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
+    return False
 
 
 class CommentOwnerPermission(IsAuthenticatedOrReadOnly):
   def has_object_permission(self, request, view, obj):
-    user = obj.user
-    if (user.is_anonymous() or obj.script_details.script.status): return False
-
-    if ('done' in request.data.keys()):
-      return is_domainreviewer(user) or is_qualityreviewer(user) or obj.user == user
-
-    return request.user == obj.user
+    if request.user.is_authenticated:
+      domain = self.kwargs['domain']
+      fid = self.kwargs['fid']
+      lid = self.kwargs['lid']
+      tid = self.kwargs['tid']
+      return  is_Contributor(domain, fid, lid, tid) or is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid) or obj.user == request.user
+    return False
+    
 
 class CanCommentPermission(IsAuthenticatedOrReadOnly):
   def has_object_permission(self, request, view, obj):
@@ -58,22 +65,15 @@ class CanCommentPermission(IsAuthenticatedOrReadOnly):
 class CanRevisePermission(IsAuthenticatedOrReadOnly):
   def has_object_permission(self, request, view, obj):
     return not obj.script.status
-    
-def getFOSS(tutorial):
-  tutorialdetails = TutorialDetail.objects.get(tutorial=tutorial)
-  return tutorialdetails
 
-def isContributor(foss, language, user):
-  if ContributorRole.objects.filter(foss_category=foss.foss, language=language, user=user).exists():
-    return True
-  return False
+def is_Contributor(domain, fid, lid, username):
+  roles = get_roles(domain, fid, lid, username)
+  return 'Contributor' in roles
 
-def isDomainReviewer(foss, language, user):
-  if DomainReviewerRole.objects.filter(foss_category=foss.foss, language=language, user=user).exists():
-    return True
-  return False
+def is_DomainReviewer(domain, fid, lid, username):
+  roles = get_roles(domain, fid, lid, username)
+  return 'Domain-Reviewer' in roles
 
-def isQualityReviewer(foss, language, user):
-  if QualityReviewerRole.objects.filter(foss_category=foss.foss, language=language, user=user).exists():
-    return True
-  return False
+def is_QualityReviewer(domain, fid, lid, username):
+  roles = get_roles(domain, fid, lid, username)
+  return 'Quality-Reviewer' in roles

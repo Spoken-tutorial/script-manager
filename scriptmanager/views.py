@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import ContributorRole,TutorialDetail,Language
 from django.contrib.auth.models import User
 from .models import Script,ScriptDetail,Comment
-from .serializers import ContributorRoleSerializer,TutorialDetailSerializer,ScriptDetailSerializer,ScriptSerializer,CommentSerializer,ReversionSerializer
+from .serializers import ScriptDetailSerializer,ScriptSerializer,CommentSerializer,ReversionSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,generics
@@ -15,17 +14,18 @@ from django.core.files.storage import FileSystemStorage
 from bs4 import BeautifulSoup
 from datetime import datetime,timedelta
 import time
-from creation.views import is_videoreviewer,is_domainreviewer,is_qualityreviewer
+from .permissions import is_Contributor,is_DomainReviewer,is_QualityReviewer
 import uuid
 import subprocess 
 from .permissions import ScriptOwnerPermission, ScriptModifyPermission, PublishedScriptPermission, ReviewScriptPermission, CommentOwnerPermission, CanCommentPermission, CanRevisePermission
 from django.utils import timezone
+from .utils import get_all_foss_languages, get_all_tutorials, get_tutorial_details
 
 def custom_jwt_payload_handler(user):
   payload = default_jwt_payload_handler(user)
 
-  payload['is_domainreviewer'] = is_domainreviewer(user)
-  payload['is_qualityreviewer'] = is_qualityreviewer(user)
+  #payload['is_domainreviewer'] = is_DomainReviewer(user)
+  #payload['is_qualityreviewer'] = is_QualityReviewer(user)
 
   return payload
 
@@ -40,52 +40,42 @@ def index(request):
   return render(request, 'scriptmanager/index.html', {'token': token})
   
 
-class ContributorRoleList(generics.ListAPIView):
-  def get_queryset(self):
-      return ContributorRole.objects.filter(user = self.request.user,status = True)
+class FossLanguageList(generics.ListAPIView):
 
   def get(self, request):
-    categories = ContributorRoleSerializer(self.get_queryset(), many=True).data
-
-    unique_categories = {}
-    res = []
-
-    for category in categories:
-      category_id = category['foss_category']['id']
-
-      if category_id not in unique_categories:
-        foss_category = category['foss_category']
-        unique_categories[category_id] = {
-          'foss_category': {
-            'id': foss_category['id'],
-            'name': foss_category['name'],
-            'description': foss_category['description']
-          },
-          'languages': []
-        }
-
-      unique_categories[category_id]['languages'].append(category['language'])
-
-    for (k,v) in unique_categories.items():
-      res.append(v)
-
-    return Response({ 'data': res }, status=200)
-
-  serializer_class  =  ContributorRoleSerializer
+    data = get_all_foss_languages()
+    return Response({ 'data':  data}, status=200)
 
 
 class TutorialDetailList(generics.ListAPIView):
-  serializer_class = TutorialDetailSerializer
 
-  def get_serializer_context(self):
-    return {"lang": self.kwargs['lid'],"user":self.request.user}
-    
-  def get_queryset(self):
-    if ContributorRole.objects.filter(user  =  self.request.user,foss_category  =  self.kwargs.get('fid'), language=self.kwargs.get('lid')).exists():
-      return TutorialDetail.objects.filter(foss  =  self.kwargs.get('fid')).order_by('order')
+  def get(self, request, *args, **kwargs):
+    tutorials = get_all_tutorials(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'])
+    if tutorials:
+      for k, v in enumerate(tutorials['tutorials']):
+        script_exist, script = self.get_script_exist(int(v['id']))
+        v['script_exist'] = script_exist
+        v['published'] =  script.status if script_exist else False
+        v['language'] =  int(self.kwargs['lid'])
+        if script_exist:
+          v['published_by'] = script.published_by.username if script.published_by else None
+        v['published_on'] = script.published_on if script_exist else None
+        if script_exist:
+          v['created_by'] = script.created_by.username if script.created_by else None
+        v['suggested_title'] = script.suggested_title if script_exist else None
+        v['versionNo'] = script.versionNo if script_exist else None
+        tutorials['tutorials'][k] = v
+    return Response({ 'data': tutorials }, status=200)
+
+  def get_script_exist(self, tid):
+    script = None
+    if Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=tid, language=int(self.kwargs['lid'])).exists():
+      script = Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=tid, language=int(self.kwargs['lid'])).order_by('-versionNo').first()
+      return True, script
     else:
-      return None
+      return False, script
 
+  
 class ScriptCreateAPIView(generics.ListCreateAPIView):
   permission_classes = [ScriptOwnerPermission]
   serializer_class = ScriptDetailSerializer
@@ -141,11 +131,9 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
   def get_queryset(self): 
     try:
-      tutorial=TutorialDetail.objects.get(pk = int(self.kwargs['tid']))
-      language=Language.objects.get(pk = int(self.kwargs['lid']))
-      script = Script.objects.get(tutorial = tutorial,language = language)
+      script = Script.objects.get(domain=self.kwargs['domain'], foss_id=self.kwargs['fid'], language_id=self.kwargs['lid'], tutorial_id=self.kwargs['tid'], versionNo=self.kwargs['vid'])
       user=self.request.user
-      if is_domainreviewer(user) or is_qualityreviewer(user) or is_videoreviewer(user) or script.user == user or script.status == True:
+      if is_DomainReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'],  user.username) or is_QualityReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'],  user.username)  or script.user == user or script.status == True:
         script_details = ScriptDetail.objects.filter(script = script)
         ordering = script.ordering
 
@@ -158,31 +146,33 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     except:
       return None
 
-  def get(self, request, tid, lid, vid):
-    tutorial = TutorialDetail.objects.get(pk=tid)
-    language = Language.objects.get(pk=lid)
-
-    script = Script.objects.get(tutorial=tutorial, language=language, versionNo=vid)
-    self.check_object_permissions(request, script)
-
+  def get(self, request, fid, tid, lid, vid, domain):
+    script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
     serialized = ScriptSerializer(script)
-
     return Response(serialized.data, status=200)
 
-  def create(self, request, tid, lid, vid):
+  def create(self, request, fid, tid, lid, vid, domain):
     details=[]
     create_request_type=request.data['type']
-
-    tutorial=TutorialDetail.objects.get(pk = int(self.kwargs['tid']))
-    language=Language.objects.get(pk = int(self.kwargs['lid']))
-    if not Script.objects.filter(tutorial = tutorial,language = language, versionNo=int(self.kwargs['vid'])).exists():
-      script = Script.objects.create(tutorial = tutorial,language = language, user = self.request.user, versionNo=vid, editable=True)
-      if int(self.kwargs['vid']) > 1:
-        prevScript = Script.objects.get(tutorial = tutorial,language = language, versionNo=int(self.kwargs['vid'])-1) #Get previous version
+    if not Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)).exists():
+      tutorial = get_tutorial_details(domain, fid, lid, tid)
+      script = Script.objects.create(
+        domain = domain,
+        foss = tutorial['foss'],
+        foss_id = int(fid),
+        language = tutorial['language'],
+        language_id = int(lid),
+        tutorial = tutorial['tutorial'],
+        tutorial_id = int(tid),
+        user = self.request.user, 
+        versionNo=int(vid), 
+        editable=True)
+      if int(vid) > 1:
+        prevScript = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)-1) #Get previous version
         prevScript.editable = False
         prevScript.save()
     else:
-      script = Script.objects.get(tutorial = tutorial,language = language, versionNo=vid)
+      script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
 
     if(create_request_type=='form'):
       details = request.data['details']
@@ -240,21 +230,17 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       return Response({'status': True, 'data': serialized.data },status = 201)
     return Response({'status': False, 'message': 'Failed to create script'},status = 500)
 
-  def delete(self, request, tid, lid, vid):
+  def delete(self, request, fid, tid, lid, vid, domain):
     try:
-      tutorial=TutorialDetail.objects.get(pk = tid)
-      language=Language.objects.get(pk = lid)
-      script = Script.objects.get(tutorial = tutorial, language = language, versionNo=vid)
+      script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
       script.delete()
       return Response({'status': True},status = 202)
     except:
       return Response({'status': False, 'message': 'Failed to delete script'},status = 403)
 
-  def patch(self, request, tid, lid, vid):
+  def patch(self, request, fid, tid, lid, vid, domain):
     try:
-      tutorial=TutorialDetail.objects.get(pk = int(self.kwargs['tid']))
-      language=Language.objects.get(pk = int(self.kwargs['lid']))
-      script = Script.objects.get(tutorial = tutorial, language = language, versionNo=int(self.kwargs['vid']))
+      script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
 
       if 'suggested_title' in request.data:
         suggested_title = request.data['suggested_title']
@@ -279,16 +265,11 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 class ScriptDetailAPIView(generics.ListAPIView):
   permission_classes = [ScriptModifyPermission]
 
-  def patch(self, request, tid, lid, vid, script_detail_id):
+  def patch(self, request, script_detail_id):
     try:
-      tutorial=TutorialDetail.objects.get(pk = int(self.kwargs['tid']))
-      language=Language.objects.get(pk = int(self.kwargs['lid']))
-      # Script.objects.get(tutorial = tutorial, language = language, user = self.request.user)
-
       script_details  =  self.request.data
       script_details['id']=int(script_detail_id)
-      script  =  ScriptDetail.objects.get(pk = (script_details['id']))
-      self.check_object_permissions(request, script)
+      script  =  ScriptDetail.objects.get(pk=script_details['id'])
       serializer  =  ScriptDetailSerializer(script, data = script_details)
       if serializer.is_valid():
         serializer.save()
@@ -297,14 +278,9 @@ class ScriptDetailAPIView(generics.ListAPIView):
     except:
       return Response({'status': False, 'message': 'Failed to update row'},status = 403)       
 
-  def delete(self, request, tid, lid, vid, script_detail_id):
+  def delete(self, request):
     try:
-      tutorial=TutorialDetail.objects.get(pk = int(self.kwargs['tid']))
-      language=Language.objects.get(pk = int(self.kwargs['lid']))
-      script = Script.objects.get(tutorial = tutorial, language = language, versionNo=vid)
-
-      script_slide = ScriptDetail.objects.get(pk = int(self.kwargs['script_detail_id']),script = script)
-      self.check_object_permissions(request, script_slide)
+      script_slide = ScriptDetail.objects.get(pk = int(self.kwargs['script_detail_id']))
 
       if script_slide.prevRow:
         q1 = ScriptDetail.objects.get(pk=script_slide.prevRow)
@@ -316,10 +292,10 @@ class ScriptDetailAPIView(generics.ListAPIView):
         q2.prevRow = script_slide.prevRow
         q2.save()
 
-      script_slide.delete()
+      if not ScriptDetail.objects.filter(script_id = script_slide.script.pk).exists(): 
+        Script.objects.delete(pk=script_slide.script.pk)
 
-      if not ScriptDetail.objects.filter(script_id = script.pk).exists(): 
-       script.delete()
+      script_slide.delete()
       return Response({'status': True},status = 202) 
     except:
       return Response({'status': False, 'message': 'Failed to delete row'},status = 403)       
@@ -329,26 +305,16 @@ class PublishedScriptAPI(APIView):
 
   def get(self, request):
     scripts = Script.objects.filter(status=True)
-    tutorials = []
     tutorials_group = {}
 
     for script in scripts:
-      try:
-        self.check_object_permissions(request, script)
-        tutorials.append(TutorialDetailSerializer(script.tutorial, context={'lang': script.language.id, 'user': request.user}).data)
-      except:
-        pass
-
-    for tutorial in tutorials:
-      tutorial['foss'] = dict(tutorial['foss'])
-      foss = tutorial['foss']
-      if foss['id'] not in tutorials_group:
-        tutorials_group[foss['id']] = {
-          'name': foss['name'],
+      if script.foss_id not in tutorials_group:
+        tutorials_group[script.foss_id] = {
+          'name': script.foss,
           'data': []
         }
 
-      tutorials_group[foss['id']]['data'].append(tutorial)
+      tutorials_group[script.foss_id]['data'].append(script.tutorial)
 
     # print(tutorials_group)
     return Response({ 'data': tutorials_group })
@@ -359,27 +325,18 @@ class ForReviewScriptAPI(APIView):
   def get(self, request):
     #Select only the latest scripts (editable=True) which are not published(status=False)
     scripts = Script.objects.filter(status=False, editable=True)
-    tutorials = []
     tutorials_group = {}
 
     for script in scripts:
-      try:
-        self.check_object_permissions(request, script)
-        tutorials.append(TutorialDetailSerializer(script.tutorial, context={'lang': script.language.id, 'user': request.user}).data)
-      except:
-        pass
-
-    for tutorial in tutorials:
-      tutorial['foss'] = dict(tutorial['foss'])
-      foss = tutorial['foss']
-      if foss['id'] not in tutorials_group:
-        tutorials_group[foss['id']] = {
-          'name': foss['name'],
+      if script.foss_id not in tutorials_group:
+        tutorials_group[script.foss_id] = {
+          'name': script.foss,
           'data': []
         }
 
-      tutorials_group[foss['id']]['data'].append(tutorial)
+      tutorials_group[script.foss_id]['data'].append(script.tutorial)
 
+    # print(tutorials_group)
     return Response({ 'data': tutorials_group })
 
 class RelativeOrderingAPI(generics.ListAPIView):
