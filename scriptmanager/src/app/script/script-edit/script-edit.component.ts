@@ -14,6 +14,8 @@ export class ScriptEditComponent implements OnInit {
   private tid: number; // tutorial id
   private lid: number; // language id
   private vid: number; // version id
+  private fid: number;
+  private domain:string;
   private scriptId: number;
   private orderId: number;
 
@@ -39,7 +41,7 @@ export class ScriptEditComponent implements OnInit {
   // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason 
   public onSaveScript(script: any) {
     this.createscriptService.patchScript(
-      this.tid, this.lid, this.vid, script
+      script
     ).subscribe(
       (res) => {
         new Noty({
@@ -85,7 +87,7 @@ export class ScriptEditComponent implements OnInit {
     // var relative_ordering = this.getRelativeOrdering().join(',');
 
     this.createscriptService.postScript(
-      this.tid, this.lid, this.vid,
+      this.domain, this.fid, this.tid, this.lid, this.vid,
       {
         "details": [script],
         // "ordering": relative_ordering,
@@ -136,7 +138,7 @@ export class ScriptEditComponent implements OnInit {
   // what it does:
   // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason 
   public getData() {
-    this.createscriptService.getScript(this.tid, this.lid, this.vid).subscribe(
+    this.createscriptService.getScript(this.domain, this.fid, this.tid, this.lid, this.vid).subscribe(
       (res) => {
         this.slides = res['slides'];
         const published = res['status'];
@@ -163,6 +165,8 @@ export class ScriptEditComponent implements OnInit {
     });
     this.lid = this.route.snapshot.params['lid']//lid is language id
     this.vid = this.route.snapshot.params['vid']//version id
+    this.fid = this.route.snapshot.params['fid']
+    this.domain = this.route.snapshot.params['domain']
     this.orderId = 0;
     this.getData();
   }

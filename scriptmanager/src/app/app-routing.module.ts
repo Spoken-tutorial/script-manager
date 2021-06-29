@@ -20,7 +20,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'create/:tid/:lid/:tutorialName/:vid',
+    path: 'create/:domain/:fid/:tid/:lid/:tutorialName/:vid',
     component: ScriptCreateComponent,
     canActivate: [AuthGuard],
     data: {
@@ -29,7 +29,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'upload/:tid/:lid/:tutorialName/:vid',
+    path: 'upload/:domain/:fid/:tid/:lid/:tutorialName/:vid',
     component: ScriptUploadComponent,
     canActivate: [AuthGuard],
     data: {
@@ -39,7 +39,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'edit/:tid/:lid/:tutorialName/:vid',
+    path: 'edit/:domain/:fid/:tid/:lid/:tutorialName/:vid',
     component: ScriptEditComponent,
     canActivate: [AuthGuard],
     data: {
@@ -48,7 +48,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'view/:tid/:lid/:tutorialName/:vid',
+    path: 'view/:domain/:fid/:tid/:lid/:tutorialName/:vid',
     component: ScriptViewComponent,
     // canActivate: [AuthGuard],
     data: {

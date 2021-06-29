@@ -53,24 +53,26 @@ class TutorialDetailList(generics.ListAPIView):
     tutorials = get_all_tutorials(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'])
     if tutorials:
       for k, v in enumerate(tutorials['tutorials']):
-        script_exist, script = self.get_script_exist(int(v['id']))
-        v['script_exist'] = script_exist
+        script_exist, script = self.get_script_exist(v['id'])
+        v['script_status'] = script_exist
         v['published'] =  script.status if script_exist else False
-        v['language'] =  int(self.kwargs['lid'])
         if script_exist:
           v['published_by'] = script.published_by.username if script.published_by else None
         v['published_on'] = script.published_on if script_exist else None
         if script_exist:
-          v['created_by'] = script.created_by.username if script.created_by else None
+          v['created_by'] = script.user.username if script.user else None
         v['suggested_title'] = script.suggested_title if script_exist else None
         v['versionNo'] = script.versionNo if script_exist else None
+        v['domain'] = self.kwargs['domain']
+        v['fid'] = self.kwargs['fid']
+        v['lid'] = self.kwargs['lid']
         tutorials['tutorials'][k] = v
     return Response({ 'data': tutorials }, status=200)
 
   def get_script_exist(self, tid):
     script = None
-    if Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=tid, language=int(self.kwargs['lid'])).exists():
-      script = Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=tid, language=int(self.kwargs['lid'])).order_by('-versionNo').first()
+    if Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=int(tid), language_id=int(self.kwargs['lid'])).exists():
+      script = Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=tid, language_id=int(self.kwargs['lid'])).order_by('-versionNo').first()
       return True, script
     else:
       return False, script
@@ -158,11 +160,11 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       tutorial = get_tutorial_details(domain, fid, lid, tid)
       script = Script.objects.create(
         domain = domain,
-        foss = tutorial['foss'],
+        #foss = tutorial['foss'],
         foss_id = int(fid),
-        language = tutorial['language'],
+        #language = tutorial['language'],
         language_id = int(lid),
-        tutorial = tutorial['tutorial'],
+        #tutorial = tutorial['tutorial'],
         tutorial_id = int(tid),
         user = self.request.user, 
         versionNo=int(vid), 
@@ -278,7 +280,7 @@ class ScriptDetailAPIView(generics.ListAPIView):
     except:
       return Response({'status': False, 'message': 'Failed to update row'},status = 403)       
 
-  def delete(self, request):
+  def delete(self, request, script_detail_id):
     try:
       script_slide = ScriptDetail.objects.get(pk = int(self.kwargs['script_detail_id']))
 

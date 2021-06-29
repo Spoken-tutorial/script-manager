@@ -5,56 +5,52 @@ from .models import ScriptDetail
 class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
   def has_permission(self, request, view):
     if request.user.is_authenticated:
-      domain = self.kwargs['domain']
-      fid = self.kwargs['fid']
-      lid = self.kwargs['lid']
-      tid = self.kwargs['tid']
-      return  is_Contributor(domain, fid, lid, tid) or is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
+      domain = view.kwargs['domain']
+      fid = view.kwargs['fid']
+      lid = view.kwargs['lid']
+      return  is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username)
     return False
     
   def has_object_permission(self, request, view, obj):
     obj.user == request.user
 
 class ScriptModifyPermission(IsAuthenticatedOrReadOnly):
-  def has_permission(self, request, view):
+  def has__permission(self, request, view):
+    obj = ScriptDetail.objects.get(pk=view.kwargs['script_detail_id'])
+    domain=obj.script.domain
+    fid=obj.script.fid
+    lid=obj.script.lid
     if request.user.is_authenticated:
-      domain = self.kwargs['domain']
-      fid = self.kwargs['fid']
-      lid = self.kwargs['lid']
-      tid = self.kwargs['tid']
-      return  is_Contributor(domain, fid, lid, tid) or is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
+      return  obj.script.user==request.user or is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username)
     return False
       
 class PublishedScriptPermission(IsAuthenticatedOrReadOnly):
     
   def has_object_permission(self, request, view, obj):
     if request.user.is_authenticated:
-      domain = self.kwargs['domain']
-      fid = self.kwargs['fid']
-      lid = self.kwargs['lid']
-      tid = self.kwargs['tid']
-      return  is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
+      domain = view.kwargs['domain']
+      fid = view.kwargs['fid']
+      lid = view.kwargs['lid']
+      return  is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username)
     return False
   
 class ReviewScriptPermission(IsAuthenticatedOrReadOnly):
   def has_object_permission(self, request, view, obj):
     if request.user.is_authenticated:
-      domain = self.kwargs['domain']
-      fid = self.kwargs['fid']
-      lid = self.kwargs['lid']
-      tid = self.kwargs['tid']
-      return  is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid)
+      domain = view.kwargs['domain']
+      fid = view.kwargs['fid']
+      lid = view.kwargs['lid']
+      return  is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username)
     return False
 
 
 class CommentOwnerPermission(IsAuthenticatedOrReadOnly):
   def has_object_permission(self, request, view, obj):
     if request.user.is_authenticated:
-      domain = self.kwargs['domain']
-      fid = self.kwargs['fid']
-      lid = self.kwargs['lid']
-      tid = self.kwargs['tid']
-      return  is_Contributor(domain, fid, lid, tid) or is_DomainReviewer(domain, fid, lid, tid) or is_QualityReviewer(domain, fid, lid, tid) or obj.user == request.user
+      domain = view.kwargs['domain']
+      fid = view.kwargs['fid']
+      lid = view.kwargs['lid']
+      return  is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username) or obj.user == request.user
     return False
     
 

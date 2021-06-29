@@ -24,14 +24,14 @@ export class CreateScriptService {
   }
 
   // API service for fetching scripts to show in view component
-  public getScript(tid, lid, vid) {
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/`
+  public getScript(domain, fid, tid, lid, vid) {
+    const _url = `${this.apiUrl}/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`
     return this.http.get(_url);
   }
 
   // API service for creating scripts for the first time
-  public postScript(tid, lid, vid, data) {
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/`
+  public postScript(domain, fid, tid, lid, vid, data) {
+    const _url = `${this.apiUrl}/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`
     var ls = this.http.post(
       _url,
       data,
@@ -41,9 +41,9 @@ export class CreateScriptService {
   }
 
   // API service for updating scripts at slide level
-  public patchScript(tid, lid, vid, data) {
+  public patchScript(data) {
     let script_pk = data['id']
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/${script_pk}/`
+    const _url = `${this.apiUrl}/api/scripts/modify/${script_pk}/`
     var ls = this.http.patch(
       _url,
       data,
@@ -53,8 +53,8 @@ export class CreateScriptService {
   }
 
   // API service for deleting scripts at slide level
-  public deleteScript(tid, lid, vid, script_pk) {
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/${script_pk}/`
+  public deleteScript(script_pk) {
+    const _url = `${this.apiUrl}/api/scripts/modify/${script_pk}/`
     var ls = this.http.delete(
       _url,
       this.httpOptions
@@ -76,8 +76,8 @@ export class CreateScriptService {
     );
   }
 
-  public changeScriptStatus(tid, lid, vid, status) {
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/`
+  public changeScriptStatus(domain, fid, tid, lid, vid, status) {
+    const _url = `${this.apiUrl}/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`
 
     return this.http.patch(
       _url,
@@ -102,8 +102,8 @@ export class CreateScriptService {
     );
   }
 
-  public suggestTutorialTitle(tid, lid, vid, suggested_title) {
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/`
+  public suggestTutorialTitle(domain, fid, tid, lid, vid, suggested_title) {
+    const _url = `${this.apiUrl}/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`
     return this.http.patch(
       _url,
       { 'suggested_title': suggested_title },
@@ -112,8 +112,8 @@ export class CreateScriptService {
   }
 
   // API service for deleting entire script
-  public deleteScriptVersion(tid, lid, vid) {
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/`
+  public deleteScriptVersion(domain, fid, tid, lid, vid) {
+    const _url = `${this.apiUrl}/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`
     var ls = this.http.delete(
       _url,
       this.httpOptions

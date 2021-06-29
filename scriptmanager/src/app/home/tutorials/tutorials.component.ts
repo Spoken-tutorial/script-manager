@@ -25,9 +25,9 @@ export class TutorialsComponent implements OnInit {
     this.router.navigate(['ScriptCreateComponent']);
   }
 
-  public reupload(tid, lid, tutorialName, vid, isDelete){
+  public reupload(domain, fid, tid, lid, tutorialName, vid, isDelete){
     if (isDelete) {
-      this.createscriptService.deleteScriptVersion(tid, lid, vid).subscribe(
+      this.createscriptService.deleteScriptVersion(domain, fid, tid, lid, vid).subscribe(
         (res) => {
           new Noty({
             type: 'success',
@@ -59,11 +59,11 @@ export class TutorialsComponent implements OnInit {
           }).show();
         }
       );
-      this.router.navigate(['/upload/' + tid + '/' + lid + '/' + tutorialName + '/' + vid]);
+      this.router.navigate(['/upload/' +domain+'/'+fid+'/'+ tid + '/' + lid + '/' + tutorialName + '/' + vid]);
     }
     else {
       const version = +vid + 1;
-      this.router.navigate(['/upload/' + tid + '/' + lid + '/' + tutorialName + '/' + version]);
+      this.router.navigate(['/upload/' + domain+'/'+fid+'/'+ tid+ '/' + lid + '/' + tutorialName + '/' + version]);
     }
   }
 

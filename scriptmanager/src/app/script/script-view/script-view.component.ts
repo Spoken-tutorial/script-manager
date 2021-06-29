@@ -20,6 +20,8 @@ export class ScriptViewComponent implements OnInit {
   private tid: number;
   private lid: number;
   private vid: number;
+  private domain: string;
+  private fid: number;
   public comment = false;
   public revision = false;
   public comments: any = [];
@@ -54,7 +56,7 @@ export class ScriptViewComponent implements OnInit {
 
   public viewScript() {
     this.createscriptService.getScript(
-      this.tid, this.lid, this.vid
+      this.domain, this.fid, this.tid, this.lid, this.vid
     ).subscribe(
       (res) => {
         this.slides = res['slides'];
@@ -65,7 +67,7 @@ export class ScriptViewComponent implements OnInit {
   }
 
   public onPublishChange(status) {
-    this.createscriptService.changeScriptStatus(this.tid, this.lid, this.vid, status)
+    this.createscriptService.changeScriptStatus(this.domain, this.fid, this.tid, this.lid, this.vid, status)
       .subscribe(
         (res) => {
           this.script.status = res['status'];
@@ -89,7 +91,7 @@ export class ScriptViewComponent implements OnInit {
     })
     .then((result) => {
       if (result.value) {
-        this.createscriptService.suggestTutorialTitle(this.tid, this.lid, this.vid, `${result.value}`)
+        this.createscriptService.suggestTutorialTitle(this.domain, this.fid,this.tid, this.lid, this.vid, `${result.value}`)
           .subscribe(
             (res) => {
               this.script.suggested_title = res['suggested_title'];
@@ -250,9 +252,9 @@ export class ScriptViewComponent implements OnInit {
   }
 
   public onScriptVersionChange(vid){
-    this.router.navigate(['/view/' + this.tid + '/' + this.lid + '/' + this.tutorialName + '/' + vid]);
+    this.router.navigate(['/view/' + this.domain+"/"+this.fid+"/"+this.tid + '/' + this.lid + '/' + this.tutorialName + '/' + vid]);
     this.createscriptService.getScript(
-      this.tid, this.lid, vid
+      this.domain, this.fid, this.tid, this.lid, vid
     ).subscribe(
       (res) => {
         this.slides = res['slides'];
@@ -269,6 +271,8 @@ export class ScriptViewComponent implements OnInit {
     this.lid = this.route.snapshot.params['lid'];
     this.tutorialName = this.route.snapshot.params['tutorialName'];
     this.vid = this.route.snapshot.params['vid'];
+    this.domain = this.route.snapshot.params['domain'];
+    this.fid = this.route.snapshot.params['fid'];
     this.viewScript();
   }
 

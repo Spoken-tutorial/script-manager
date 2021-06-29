@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit {
     this.currentFossCategory = -1
     this.currentLanguage = -1
     this.description =''
+    this.tutorials = null
   }
 
   public onFossCategoryChange(fid) {

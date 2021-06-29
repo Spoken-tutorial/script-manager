@@ -27,10 +27,10 @@ export class UploadFileService {
   }
 
   // API service for uploading the file
-  public postFile(tid, lid, vid, file) {
+  public postFile(domain, fid, tid, lid, vid, file) {
     this.uploadedFile.append('docs', file, file.name);
     this.uploadedFile.append('type', 'file');
-    const _url = `${this.apiUrl}/tutorial/${tid}/language/${lid}/scripts/${vid}/`;
+    const _url = `${this.apiUrl}/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`;
 
     return this.http.post(
       _url,

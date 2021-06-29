@@ -54,7 +54,7 @@ def get_spoken_roles(fid, lid, username):
     url = "http://localhost:8000/api/script/roles/"+str(fid)+"/"+str(lid)+"/"+username+"/"
     spoken_roles = requests.get(url)
     spoken_roles = spoken_roles.json()['spokentutorials']
-    return spoken_roles
+    return spoken_roles['roles']
 
 def get_health_roles(fid, lid, username):
     url = "http://localhost:8000/api/script/roles/"+str(fid)+"/"+str(lid)+"/"+username+"/"
