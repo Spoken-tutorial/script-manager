@@ -1,14 +1,20 @@
 import requests
 
 def get_spokentutorials_foss():
-    spokentutorials = requests.get('http://localhost:8000/api/script/foss_lang/')
-    spokentutorials = spokentutorials.json()['spokentutorials']
-    return spokentutorials
+    try:
+        spokentutorials = requests.get('http://localhost:8000/api/script/foss_lang/')
+        spokentutorials = spokentutorials.json()['spokentutorials']
+        return spokentutorials
+    except:
+        return None
 
 def get_healthnuritions_foss():
-    healthnuritions = requests.get('https://beta.health.spoken-tutorial.org/HealthNutrition/getCatAndLan')
-    healthnuritions = healthnuritions.json()['healthnutrition']
-    return healthnuritions
+    try:
+        healthnuritions = requests.get('https://beta.health.spoken-tutorial.org/HealthNutrition/getCatAndLan')
+        healthnuritions = healthnuritions.json()['healthnutrition']
+        return healthnuritions
+    except:
+        return None
 
 def get_spokentutorials_tutorials(fid, lid):
     url = "http://localhost:8000/api/script/tutorials/"+str(fid)+"/"+str(lid)+"/"

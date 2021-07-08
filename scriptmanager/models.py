@@ -21,7 +21,7 @@ class Script(models.Model):
 	editable = models.BooleanField(default=False)
 
 	def __str__(self):
-		return str(self.tutorial) + ' - ' + str(self.language)
+		return str(self.domain)+ ' - ' +str(self.foss_id) + ' - ' + str(self.tutorial_id)
 
 class ScriptDetail(models.Model):
 	cue = models.TextField(blank=True)
