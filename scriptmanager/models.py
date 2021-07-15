@@ -8,6 +8,7 @@ class Script(models.Model):
 	foss_id = models.IntegerField(blank=True)
 	tutorial = models.TextField(blank=True)
 	tutorial_id = models.IntegerField(blank=True)
+	outline = models.TextField(blank=True)
 	language = models.TextField(blank=True)
 	language_id = models.IntegerField(blank=True)
 	suggested_title = models.CharField(max_length=255, null=True)

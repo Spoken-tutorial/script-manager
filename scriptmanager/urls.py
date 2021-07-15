@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-
+from rest_framework_jwt.views import obtain_jwt_token
 # To use the API document generator for the script creation system 
 # (a) add 'rest_framework_swagger' to INSTALLED_APPS in spoken/settings.py
 # (b) uncomment the api/docs url in the urlpatterns given below
@@ -21,7 +21,7 @@ urlpatterns = [
   url(r'api/scripts/review/$', views.ForReviewScriptAPI.as_view()),
   url(r'api/comments/(?P<comment_id>[0-9]+)/$', views.CommentAPI.as_view()),
   # url(r'api/docs/$', schema_view),
-  url(r'', views.index, name='home')
+  url(r'api/token-auth/', obtain_jwt_token,name='jwt_token'),
 ]
 
 app_name = 'scriptmanager'

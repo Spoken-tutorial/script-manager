@@ -130,7 +130,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = str(BASE_DIR) + '/static/'
+if not DEBUG:
+    STATIC_ROOT = str(BASE_DIR) + '/static/'
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static"
+    ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 # Default primary key field type
@@ -185,3 +190,7 @@ CACHES = {
         'TIMEOUT': 3600 * 24 * 7,
     }
 }
+
+LOGIN_URL = 'login/'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'

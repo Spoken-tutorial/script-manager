@@ -137,7 +137,7 @@
 
     </div>
 
-    <div class="columns" *ngIf="authService.isReviewer()">
+    <div class="columns" >
       <div class="column buttons">
         <div class="field is-grouped">
           <div  class="control" *ngIf="!script?.status && script.editable" [swal]="{ title: 'Publish Tutorial',

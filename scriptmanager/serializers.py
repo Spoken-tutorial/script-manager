@@ -86,3 +86,15 @@ class ReversionSerializer(serializers.Serializer):
   script_id = serializers.CharField()
   date_time = serializers.DateTimeField()
   user = serializers.CharField()
+
+
+class ScriptListSerializer(serializers.ModelSerializer):
+  tid = serializers.ReadOnlyField(source='tutorial_id')
+  fid = serializers.ReadOnlyField(source='foss_id')
+  lid = serializers.ReadOnlyField(source='language_id')
+  user = serializers.ReadOnlyField(source='user.username')
+  published_by = serializers.ReadOnlyField(source='published_by.username')
+  class Meta:
+    model = Script
+    fields = ('tid', 'fid','lid','domain', 'foss', 'language', 'tutorial', 'outline', 'status', 'user', 'published_by', 'published_on', 'suggested_title', 'versionNo', 'editable')
+

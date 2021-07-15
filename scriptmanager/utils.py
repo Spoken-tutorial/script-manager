@@ -29,7 +29,10 @@ def get_healthnuritions_tutorials(fid, lid):
     return healthnuritions
 
 def get_spokentutorials_tutorials_details(fid, lid, tid):
-    pass
+    url = "http://localhost:8000/api/script/tutorial_detail/"+str(fid)+"/"+str(lid)+"/"+str(tid)+"/"
+    spokentutorials = requests.get(url)
+    spokentutorials = spokentutorials.json()['spokentutorials']
+    return spokentutorials
 
 def get_healthnutrition_tutorials_details(fid, lid, tid):
     pass

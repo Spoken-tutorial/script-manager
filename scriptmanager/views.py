@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import Script,ScriptDetail,Comment
-from .serializers import ScriptDetailSerializer,ScriptSerializer,CommentSerializer,ReversionSerializer
+from .serializers import ScriptDetailSerializer,ScriptSerializer,CommentSerializer,ReversionSerializer, ScriptListSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,generics
@@ -160,11 +160,12 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       tutorial = get_tutorial_details(domain, fid, lid, tid)
       script = Script.objects.create(
         domain = domain,
-        #foss = tutorial['foss'],
+        foss = tutorial['foss'],
         foss_id = int(fid),
-        #language = tutorial['language'],
+        language = tutorial['language'],
         language_id = int(lid),
-        #tutorial = tutorial['tutorial'],
+        tutorial = tutorial['tutorial']['tutorial'],
+        outline = tutorial['tutorial']['outline'],
         tutorial_id = int(tid),
         user = self.request.user, 
         versionNo=int(vid), 
@@ -251,6 +252,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         return Response({'suggested_title': suggested_title, 'message': 'Successfully updated suggested title'}, status = 200) 
 
       if 'status' in request.data:
+        if  not is_DomainReviewer(domain, fid, lid, request.user.username) or not is_QualityReviewer(domain, fid, lid, request.user.username):
+          return Response({'message': 'You do not have review permission.'}, status = 403) 
         status = request.data['status']
         script.status = status
       
@@ -307,19 +310,8 @@ class PublishedScriptAPI(APIView):
 
   def get(self, request):
     scripts = Script.objects.filter(status=True)
-    tutorials_group = {}
-
-    for script in scripts:
-      if script.foss_id not in tutorials_group:
-        tutorials_group[script.foss_id] = {
-          'name': script.foss,
-          'data': []
-        }
-
-      tutorials_group[script.foss_id]['data'].append(script.tutorial)
-
-    # print(tutorials_group)
-    return Response({ 'data': tutorials_group })
+    data = ScriptListSerializer(scripts, many=True).data
+    return Response({ 'data': data }, status=200)
 
 class ForReviewScriptAPI(APIView):
   permission_classes = [ReviewScriptPermission]

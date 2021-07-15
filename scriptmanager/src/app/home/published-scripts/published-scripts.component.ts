@@ -18,8 +18,6 @@ export class PublishedScriptsComponent implements OnInit {
       .subscribe(
         (res) => {
           this.scripts = res['data'];
-          console.log(this.scripts);
-          console.log(Object.keys(this.scripts));
         },
         console.error
       )
