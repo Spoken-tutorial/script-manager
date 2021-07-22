@@ -1,8 +1,9 @@
 import requests
-
+from script.config import spoken_Url, health_url
 def get_spokentutorials_foss():
     try:
-        spokentutorials = requests.get('http://localhost:8000/api/script/foss_lang/')
+        url = spoken_Url + 'api/script/foss_lang/'
+        spokentutorials = requests.get(url)
         spokentutorials = spokentutorials.json()['spokentutorials']
         return spokentutorials
     except:
@@ -10,32 +11,41 @@ def get_spokentutorials_foss():
 
 def get_healthnuritions_foss():
     try:
-        healthnuritions = requests.get('https://beta.health.spoken-tutorial.org/HealthNutrition/getCatAndLan')
+        url = health_url + "HealthNutrition/getCatAndLan"
+        healthnuritions = requests.get(url)
         healthnuritions = healthnuritions.json()['healthnutrition']
         return healthnuritions
     except:
         return None
 
 def get_spokentutorials_tutorials(fid, lid):
-    url = "http://localhost:8000/api/script/tutorials/"+str(fid)+"/"+str(lid)+"/"
+    url = spoken_Url + "api/script/tutorials/"+str(fid)+"/"+str(lid)+"/"
     spokentutorials = requests.get(url)
     spokentutorials = spokentutorials.json()['spokentutorials']
     return spokentutorials
 
 def get_healthnuritions_tutorials(fid, lid):
-    url = "https://beta.health.spoken-tutorial.org/HealthNutrition/getTopicOnCatAndLan/"+str(fid)+"/"+str(lid)
+    url = health_url + "HealthNutrition/getTopicOnCatAndLan/"+str(fid)+"/"+str(lid)
     healthnuritions = requests.get(url)
     healthnuritions = healthnuritions.json()['healthnutrition']
     return healthnuritions
 
 def get_spokentutorials_tutorials_details(fid, lid, tid):
-    url = "http://localhost:8000/api/script/tutorial_detail/"+str(fid)+"/"+str(lid)+"/"+str(tid)+"/"
+    url = spoken_Url+"api/script/tutorial_detail/"+str(fid)+"/"+str(lid)+"/"+str(tid)+"/"
     spokentutorials = requests.get(url)
     spokentutorials = spokentutorials.json()['spokentutorials']
     return spokentutorials
 
 def get_healthnutrition_tutorials_details(fid, lid, tid):
-    pass
+    url = health_url+"HealthNutrition/getTutorial/" + str(tid)
+    healthnuritions = requests.get(url)
+    healthnuritions = healthnuritions.json()['healthnutrition']
+    data = {
+        'foss': healthnuritions['tutorial'][0]['foss'], 
+        'language':healthnuritions['tutorial'][0]['language'], 
+        'tutorial': {'tutorial': healthnuritions['tutorial'][0]['tutorial'], 'outline': healthnuritions['tutorial'][0]['outline']}
+        }
+    return data
 
 def get_all_foss_languages():
     spokentutorials = get_spokentutorials_foss()
@@ -59,17 +69,19 @@ def get_tutorial_details(domain, fid, lid, tid):
     return tdetails
 
 
+#fetch roles 
+
 def get_spoken_roles(fid, lid, username):
-    url = "http://localhost:8000/api/script/roles/"+str(fid)+"/"+str(lid)+"/"+username+"/"
+    url = spoken_Url+"api/script/roles/"+str(fid)+"/"+str(lid)+"/"+username+"/"
     spoken_roles = requests.get(url)
     spoken_roles = spoken_roles.json()['spokentutorials']
     return spoken_roles['roles']
 
 def get_health_roles(fid, lid, username):
-    url = "http://localhost:8000/api/script/roles/"+str(fid)+"/"+str(lid)+"/"+username+"/"
+    url = health_url+"HealthNutrition/getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
     health_roles = requests.get(url)
     health_roles = health_roles.json()['healthnutrition']
-    return health_roles
+    return health_roles['roles']
 
 def get_roles(domain, fid, lid, username):
     roles = None
