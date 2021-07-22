@@ -13,13 +13,13 @@
         {% block cssblock %}{% endblock %}
     </head>
     <body>
-        <nav class="navbar has-shadow">
+        <nav class="navbar has-shadow is-success">
             <div class="container">
                 <div class="navbar-brand">
                     <a class="navbar-item" href="../">
+                        Spoken Tutorial Script Manager
                         <img src="https://spoken-tutorial.org/static/spoken/images/logo.png" alt="Spoken Tutorial Script Manager">
                     </a>
-    
                     <div class="navbar-burger burger" data-target="navMenu">
                         <span></span>
                         <span></span>
@@ -27,7 +27,9 @@
                     </div>
                 </div>
                 <div class="navbar-end">
+                    {% if user.is_authenticated %}
                     <div class="navbar-item has-dropdown is-hoverable">
+                        
                         <a class="navbar-link">
                         Account
                         </a>
@@ -37,6 +39,11 @@
                             </a>
                         </div>
                     </div>
+                    {% else %}
+                    <a class="navbar-item" href="{% url 'login'%}">
+                        Login
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </nav>

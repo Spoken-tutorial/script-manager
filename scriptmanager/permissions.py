@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .utils import get_roles
-from .models import ScriptDetail
+from .models import ScriptDetail, Script
 
 class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
   def has_permission(self, request, view):
@@ -9,6 +9,13 @@ class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
       fid = view.kwargs['fid']
       lid = view.kwargs['lid']
       return  is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username)
+    if request.user.is_anonymous:
+      domain = view.kwargs['domain']
+      fid = view.kwargs['fid']
+      lid = view.kwargs['lid']
+      tid = view.kwargs['tid']
+      vid = view.kwargs['vid']
+      return Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid, status=True).exists()
     return False
     
   def has_object_permission(self, request, view, obj):

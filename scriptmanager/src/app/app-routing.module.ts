@@ -68,7 +68,7 @@ const routes: Routes = [
   {
     path: 'published',
     component: PublishedScriptsComponent,
-    canActivate: [AuthGuard],
+   // canActivate: [AuthGuard],
     data: {
       title: 'Published Scripts',
       animation: 'HomePage'

@@ -315,23 +315,11 @@ class PublishedScriptAPI(APIView):
 
 class ForReviewScriptAPI(APIView):
   permission_classes = [ReviewScriptPermission]
-
+  
   def get(self, request):
-    #Select only the latest scripts (editable=True) which are not published(status=False)
     scripts = Script.objects.filter(status=False, editable=True)
-    tutorials_group = {}
-
-    for script in scripts:
-      if script.foss_id not in tutorials_group:
-        tutorials_group[script.foss_id] = {
-          'name': script.foss,
-          'data': []
-        }
-
-      tutorials_group[script.foss_id]['data'].append(script.tutorial)
-
-    # print(tutorials_group)
-    return Response({ 'data': tutorials_group })
+    data = ScriptListSerializer(scripts, many=True).data
+    return Response({ 'data': data }, status=200)
 
 class RelativeOrderingAPI(generics.ListAPIView):
   permission_classes = [ScriptOwnerPermission]
