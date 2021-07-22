@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', auth_views.LoginView.as_view(template_name='login.html', redirect_authenticated_user=True), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('change-password/', auth_views.PasswordChangeView.as_view(), name='change_password'),
     path('scripts/', include('scriptmanager.urls', namespace='scripts')),
     re_path(r'', index, name='home')
 ]

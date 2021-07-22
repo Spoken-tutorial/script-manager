@@ -34,6 +34,14 @@
                         Account
                         </a>
                         <div class="navbar-dropdown">
+                            {% if user.is_staff %}
+                            <a class="navbar-item" href="admin/">
+                                Dashboard
+                                </a>
+                            {% endif %}
+                            <a class="navbar-item" href="{% url 'change_password'%}">
+                                Change password
+                                </a>
                             <a class="navbar-item" href="{% url 'logout'%}">
                             Logout
                             </a>
