@@ -53,12 +53,7 @@ class ReviewScriptPermission(IsAuthenticatedOrReadOnly):
 
 class CommentOwnerPermission(IsAuthenticatedOrReadOnly):
   def has_object_permission(self, request, view, obj):
-    if request.user.is_authenticated:
-      domain = view.kwargs['domain']
-      fid = view.kwargs['fid']
-      lid = view.kwargs['lid']
-      return  is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username) or obj.user == request.user
-    return False
+    return request.user.is_authenticated
     
 
 class CanCommentPermission(IsAuthenticatedOrReadOnly):

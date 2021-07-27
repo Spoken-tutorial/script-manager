@@ -397,6 +397,7 @@ class CommentCreateAPIView(generics.ListCreateAPIView):
       if script_data.comment_status == False:
         script_data.comment_status=True
         script_data.save()
+      print(request.data['comment'])
       Comment.objects.create(comment=request.data['comment'],user=self.request.user,script_details=script_data)
       return Response({'status': True},status = 202)
     except:
