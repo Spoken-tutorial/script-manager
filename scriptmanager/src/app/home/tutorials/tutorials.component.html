@@ -5,7 +5,7 @@
     </div>
     <div class="desc">
       <p *ngIf="tutorial.suggested_title"><b>Suggested Title: </b>{{ tutorial.suggested_title }}</p>
-      <p><b>Outline: </b>{{ tutorial.outline }}</p>
+      <b>Outline: </b><p [innerHTML]="tutorial.outline" ></p>
       <ng-container *ngIf="tutorial.published">
         <p><b>Published by: </b>{{ tutorial.published_by }}</p>
         <p><b>Published on: </b>{{ tutorial.published_on }}</p>
