@@ -18,13 +18,11 @@
         <div class="column is-8 is-offset-2 register">
           <div class="columns">
             <div class="column left">
-              <h1 class="title is-1">Spoken Tutorial <br/>Script Manager </h1>
+              <h1 class="subtitle is-2">Spoken Tutorial <hr/><span style="color: orange;" class="subtitle is-3">Script Manager</span> </h1>
               <h2 class="subtitle colored is-4"></h2>
               <p></p>
             </div>
             <div class="column right has-text-centered">
-              <h1 class="title is-4">Sign up today</h1>
-              <p class="description">Lorem ipsum dolor, sit amet consectetur adipisicing elit</p>
               <form method="post" action="{% url 'login'%}">
                 {% csrf_token %}
                 <div class="field">
@@ -38,9 +36,11 @@
                     <input class="input is-medium" name="password" type="password" placeholder="Password" required>
                   </div>
                 </div>
-                <button class="button is-block is-primary is-fullwidth is-medium">Submit</button>
+                <button class="button is-block is-primary is-fullwidth is-medium">Login</button>
                 <br />
-                <small><em>Lorem ipsum dolor sit amet consectetur.</em></small>
+                <br />
+                <br />
+                <br />
               </form>
             </div>
           </div>
