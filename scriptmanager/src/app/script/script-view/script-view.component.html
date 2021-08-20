@@ -112,7 +112,7 @@
                 <td>{{ i+1 }} <span *ngIf="slide.comment_status" class="dot"></span></td>
                 <td class="content" innerHTML="{{ slide.cue }}"></td>
                 <td class="content" innerHTML="{{ slide.narration }}"></td>
-                <td [ngClass]="{ 'hide-comment-tools': !overVal[i] }">
+                <td>
                   <button class="button heading" (click)="viewComment(i)" title="Click to add/view comments">
                     <i class="fa fa-comments"></i>&nbsp;
                   </button>
