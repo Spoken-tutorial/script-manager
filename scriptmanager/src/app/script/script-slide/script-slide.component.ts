@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 // import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+//import { EditorChangeContent, EditorChangeSelection } from 'ngx-quill'
 
 @Component({
   selector: 'app-script-slide',
@@ -22,6 +23,8 @@ export class ScriptSlideComponent implements OnInit {
   public comment = false;
   public ckEditorCue: boolean = false;
   public ckEditorNarration: boolean = false;
+  public visual_cue : number = 0;
+  narration = 0;
 
   public quillStyles = {
     'height': '200px',
@@ -31,6 +34,44 @@ export class ScriptSlideComponent implements OnInit {
   }
 
   editorForm: FormGroup;
+
+  
+
+  onChange(event: any): void {
+  if(event == ''){
+    this.visual_cue = 0;
+  }else
+  if(event == null){
+    this.visual_cue = 0;
+  }else{
+  var s = event;
+  var regex  = /(<([^>]+)>)/ig;
+  s = s.replace(regex, " ");
+  var regex_space = /\s{2,}/ig;
+  s = s.trim().replace(regex_space,' ')
+  var len = s.split(" ").length;
+  this.visual_cue = len;
+  }
+}
+
+  onNarrationChange(event: any): void {
+  if(event == ''){
+    this.narration = 0;
+  }else
+  if(event == null){
+    this.narration = 0;
+  }else{
+  var s = event;
+  var regex  = /(<([^>]+)>)/ig;
+  s = s.replace(regex, " ");
+  var regex_space = /\s{2,}/ig;
+  s = s.trim().replace(regex_space,' ')
+  var len = s.split(" ").length;
+  this.narration = len;
+  }
+  }
+
+  
 
   // public Editor = ClassicEditor;
   // public ckeditorConfig = {
@@ -77,6 +118,7 @@ export class ScriptSlideComponent implements OnInit {
   
   public insertSlide() {
     this.insertSlideEmitter.emit(this.index + 1);
+
   }
   
   public checkSlide() {
@@ -109,13 +151,16 @@ export class ScriptSlideComponent implements OnInit {
   public changeNarrationToEditor() {
     this.ckEditorNarration = true;
   }
-
+  
+  
   ngOnInit() {
     this.editorForm = new FormGroup({
       'cue': new FormControl(),
       'narration': new FormControl()
     })
     this.checkSlide()
+
   }
 
 }
+

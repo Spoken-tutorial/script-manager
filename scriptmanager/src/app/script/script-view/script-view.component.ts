@@ -65,7 +65,7 @@ export class ScriptViewComponent implements OnInit {
       console.error
     );
   }
-
+  
   public onPublishChange(status) {
     this.createscriptService.changeScriptStatus(this.domain, this.fid, this.tid, this.lid, this.vid, status)
       .subscribe(
@@ -202,6 +202,7 @@ export class ScriptViewComponent implements OnInit {
     this.el2.nativeElement.classList.remove('is-active')
   }
 
+  
   public getRevison(i) {
     this.revisionsService.getRevisions(
       i
