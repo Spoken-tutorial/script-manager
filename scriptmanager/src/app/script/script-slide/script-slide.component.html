@@ -28,7 +28,9 @@
                   <quill-editor id="editor" [modules]="modules" tagName="textarea" formControlName="cue" [(ngModel)]="slide.cue" (onBlur)="saveSlide(true)" 
                     [styles]="quillStyles" theme="snow"  (ngModelChange)="onChange($event)">
                   </quill-editor>
+                  <p>Character Count : {{ visual_cue_char }}</p>
                   <p>Word Count : {{ visual_cue }} </p>
+
                 </div>
               </div>
             </div>
@@ -42,6 +44,7 @@
                   <quill-editor [modules]="modules" tagName="textarea" formControlName="narration" [(ngModel)]="slide.narration"
                     (onBlur)="saveSlide(true)" [styles]="quillStyles" theme="snow" (ngModelChange)="onNarrationChange($event)">
                   </quill-editor>
+                  <p>Character Count : {{ narration_char }}</p>
                   <p>Word Count : {{ narration }} </p>
                 </div>
               </div>
