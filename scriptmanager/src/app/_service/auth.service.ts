@@ -12,7 +12,7 @@ export class AuthService {
   // using JwtToken for authorization purpose in angular system. Nothing to do with main django system.
   public getJwtToken() {
     return this.http.post(
-      'http://beta.scriptmanager.spoken-tutorial.org/api/token-auth/',
+      'http://scriptmanager.spoken-tutorial.org/api/token-auth/',
       {
         'username': 'admin',
         'password': 'test123'

@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   scriptVersionsAllowed: 2,
-  apiUrlScript:'http://beta.scriptmanager.spoken-tutorial.org/scripts/api'
+  apiUrlScript:'http://scriptmanager.spoken-tutorial.org/scripts/api'
 };
 
 /*
