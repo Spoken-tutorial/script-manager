@@ -58,14 +58,21 @@
         </div>
       </div>
     </div>
-    <div class="columns is-centered has-text-centered" *ngIf="description !== ''">
-      <div class="column">
-        <blockquote>{{description}}</blockquote>
+    <div *ngIf="authService.isAuthenticated()">
+      <div class="columns is-centered has-text-centered" *ngIf="description !== ''">
+        <div class="column">
+          <blockquote>{{description}}</blockquote>
+        </div>
+      </div>
+      <div *ngFor="let tutorial of tutorials">
+        <app-tutorials [tutorial]="tutorial"></app-tutorials>
+        <div class="is-divider" data-content="-"></div>
       </div>
     </div>
-    <div *ngFor="let tutorial of tutorials">
-      <app-tutorials [tutorial]="tutorial"></app-tutorials>
-      <div class="is-divider" data-content="-"></div>
-    </div>
+    
+    
+      
+    
+    
   </div>
 </div>

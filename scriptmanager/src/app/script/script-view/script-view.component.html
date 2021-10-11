@@ -24,7 +24,7 @@
       </div>
       <div class="column is-4">
         <div class="field is-grouped is-grouped-multiline">
-          <div class="control">
+          <div class="control" *ngIf="authService.isAuthenticated()">
             <a routerLink="/">
               <app-badge-button faClass="fa fa-chevron-left" textClass="is-info" text="Go Back" textTooltip="Click here to go back to the list of tutorials in this FOSS"></app-badge-button>
             </a>
@@ -34,8 +34,13 @@
               <app-badge-button faClass="fa fa-edit" textClass="is-info" text="Edit Mode" textTooltip="Click here to edit this script"></app-badge-button>
             </a>
           </div>
+          <div class="control" *ngIf="!script.id">
+            <a routerLink="/create/{{domain}}/{{fid}}/{{tid}}/{{lid}}/{{ tutorialName }}/{{vid}}">
+              <app-badge-button faClass="fa fa-edit" textClass="is-info" text="Create Mode" textTooltip="Click here to create this script"></app-badge-button>
+            </a>
+          </div>
         </div>
-        <div>
+        <div *ngIf="authService.isAuthenticated()">
           <div class="select" title="Click here to choose the version number for viewing the script">
             <select (change)="onScriptVersionChange($event.target.value)">
               <option *ngFor="let version of script.versions; let i = index" [value]="version">
@@ -114,7 +119,7 @@
                 <td>{{ i+1 }} <span *ngIf="slide.comment_status" class="dot"></span></td>
                 <td class="content" innerHTML="{{ slide.cue }}"></td>
                 <td class="content" innerHTML="{{ slide.narration }}"></td>
-                <td>
+                <td *ngIf="authService.isAuthenticated()">
                   <button class="button heading" (click)="viewComment(i)" title="Click to add/view comments">
                     <i class="fa fa-comments"></i>&nbsp;
                   </button>
@@ -163,7 +168,7 @@
                 confirmButtonText: 'Yes! Un-Publish it.',
                 cancelButtonText: 'No!'
               }" (confirm)="onPublishChange(false)">
-            <a>
+            <a *ngIf="authService.isAuthenticated()">
               <app-badge-button faClass="far fa-eye-slash" textClass="is-danger" text="Un-Publish" textTooltip="Click here to un-publish the script"></app-badge-button>
             </a>
           </div>

@@ -11,7 +11,8 @@ def get_spokentutorials_foss():
 
 def get_healthnuritions_foss():
     try:
-        url = health_url + "HealthNutrition/getCatAndLan"
+        # url = health_url + "HealthNutrition/getCatAndLan"
+        url = health_url + "getCatAndLan"
         healthnuritions = requests.get(url)
         healthnuritions = healthnuritions.json()['healthnutrition']
         return healthnuritions
@@ -25,7 +26,7 @@ def get_spokentutorials_tutorials(fid, lid):
     return spokentutorials
 
 def get_healthnuritions_tutorials(fid, lid):
-    url = health_url + "HealthNutrition/getTopicOnCatAndLan/"+str(fid)+"/"+str(lid)
+    url = health_url + "getTopicOnCatAndLan/"+str(fid)+"/"+str(lid)
     healthnuritions = requests.get(url)
     healthnuritions = healthnuritions.json()['healthnutrition']
     return healthnuritions
@@ -37,7 +38,8 @@ def get_spokentutorials_tutorials_details(fid, lid, tid):
     return spokentutorials
 
 def get_healthnutrition_tutorials_details(fid, lid, tid):
-    url = health_url+"HealthNutrition/getTutorial/" + str(tid)
+    # url = health_url+"HealthNutrition/getTutorial/" + str(tid)
+    url = health_url+"getTutorial/" + str(tid)
     healthnuritions = requests.get(url)
     healthnuritions = healthnuritions.json()['healthnutrition']
     data = {
@@ -78,7 +80,8 @@ def get_spoken_roles(fid, lid, username):
     return spoken_roles['roles']
 
 def get_health_roles(fid, lid, username):
-    url = health_url+"HealthNutrition/getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
+    # url = health_url+"HealthNutrition/getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
+    url = health_url+"getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
     health_roles = requests.get(url)
     health_roles = health_roles.json()['healthnutrition']
     return health_roles['roles']
