@@ -40,6 +40,9 @@ export class HomeComponent implements OnInit {
     this.currentFossCategory = fid;
     localStorage.setItem("fid",fid);
     this.languages = this.sourceData[this.currentDomainCategory]['language']
+    this.currentLanguage = -1
+    this.tutorials = null
+    console.log("**************");
     for(let i=0; i < this.fossCategories.length; i++){
       if (this.fossCategories[i]['id'] == fid){
         this.description = this.fossCategories[i]['description'];
