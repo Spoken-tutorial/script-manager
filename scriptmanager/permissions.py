@@ -4,12 +4,15 @@ from .models import ScriptDetail, Script
 
 class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
   def has_permission(self, request, view):
+    print(" TEST *********  9 has_permission()")
     if request.user.is_authenticated:
+      print(" TEST *********  10 has_permission() is_authenticated()")
       domain = view.kwargs['domain']
       fid = view.kwargs['fid']
       lid = view.kwargs['lid']
       return  is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username)
     if request.user.is_anonymous:
+      print(" TEST *********  11 has_permission() is_anonymous()")
       domain = view.kwargs['domain']
       fid = view.kwargs['fid']
       lid = view.kwargs['lid']
@@ -65,7 +68,10 @@ class CanRevisePermission(IsAuthenticatedOrReadOnly):
     return not obj.script.status
 
 def is_Contributor(domain, fid, lid, username):
+  print(" TEST *********  12 is_Contributor")
   roles = get_roles(domain, fid, lid, username)
+  print(" TEST *********  16 roles : {}".format(roles))
+  print(" TEST *********  16 roles : {}".format('Contributor' in roles))
   return 'Contributor' in roles
 
 def is_DomainReviewer(domain, fid, lid, username):

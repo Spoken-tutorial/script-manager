@@ -31,7 +31,10 @@ export class UploadFileService {
     this.uploadedFile.append('docs', file, file.name);
     this.uploadedFile.append('type', 'file');
     const _url = `${this.apiUrl}/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`;
-
+    console.log("TEST 3 ********* postFile() **********")
+    // const _url = `http://localhost:8000/scripts/api/foss/${fid}/tutorial/${tid}/language/${lid}/scripts/${vid}/${domain}/`;
+    console.log(" TEST 4 ********* postFile() url "+ _url)
+    console.log(this.uploadedFile)
     return this.http.post(
       _url,
       this.uploadedFile,
