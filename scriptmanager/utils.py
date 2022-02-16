@@ -81,12 +81,15 @@ def get_spoken_roles(fid, lid, username):
 
 def get_health_roles(fid, lid, username):
     # url = health_url+"HealthNutrition/getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
+    print(" TEST *********  14 get_health_roles")
     url = health_url+"getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
     health_roles = requests.get(url)
     health_roles = health_roles.json()['healthnutrition']
+    print(" TEST *********  15 health_roles : {}".format(health_roles))
     return health_roles['roles']
 
 def get_roles(domain, fid, lid, username):
+    print(" TEST *********  13 get_roles")
     roles = None
     if domain == "spokentutorials":
         roles = get_spoken_roles(fid, lid, username)

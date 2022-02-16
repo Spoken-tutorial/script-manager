@@ -4,6 +4,8 @@ import { UploadFileService } from '../../_service/upload-file.service'
 import { CreateScriptService } from '../../_service/create-script.service'
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FormGroup, FormControl } from '@angular/forms';
+// import * as Noty from 'noty';
+
 
 @Component({
   selector: 'app-script-upload',
@@ -39,11 +41,15 @@ export class ScriptUploadComponent implements OnInit {
     private route: ActivatedRoute,
     public uploadfileService: UploadFileService,
     public createScriptService: CreateScriptService
-  ) { }
+  ) { 
+    console.log("******* cons ********")
+  }
   // argument:called on click of submit button
   // what it does: make an api call(POST request) with the file variable containing the latest file selected by the user. 
   // returns: void
   public onFileSave() {
+    console.log("TEST 1 ********* onFileSave() **********")
+    console.log(this.domain, this.fid, this.tid, this.lid, this.vid, this.scriptFile)
     this.uploadfileService.postFile(this.domain, this.fid, this.tid, this.lid, this.vid, this.scriptFile)
       .subscribe(
         (res) => {
@@ -63,6 +69,7 @@ export class ScriptUploadComponent implements OnInit {
           }).show();
         },
         (error) => {
+          console.log("TEST 2 ********* onFileSave() NOTY Error ***********")
           new Noty({
             type: 'error',
             layout: 'topRight',

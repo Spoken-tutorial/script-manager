@@ -1,3 +1,4 @@
+from django.http import request
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import Script,ScriptDetail,Comment
@@ -79,10 +80,14 @@ class TutorialDetailList(generics.ListAPIView):
 
   
 class ScriptCreateAPIView(generics.ListCreateAPIView):
-  permission_classes = [ScriptOwnerPermission]
+  print("-----------------------------")
   serializer_class = ScriptDetailSerializer
+  
+  permission_classes = [ScriptOwnerPermission]
+  
 
   def populatePrevNext(self, script):
+    print(" TEST ********* 1 ")
     slides = ScriptDetail.objects.filter(script = script).order_by('order')
     i = 0
     for slide in slides:
@@ -94,6 +99,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       i = i + 1
 
   def getUlData(self,data):
+    print(" TEST ********* 2 ")
     data=str(data).replace("<li></li>","")
     soup=BeautifulSoup(data,'html.parser')
     if soup.find_all('ul'):
@@ -111,6 +117,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
 
   def scriptsData(self, html,script):
+    print("TEST ********* 3 ")
     soup=BeautifulSoup(html,'html.parser')
     table=soup.find("table") 
     # print(table)
@@ -131,7 +138,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     details.pop(0)
     return details
 
-  def get_queryset(self): 
+  def get_queryset(self):
+    print("TEST ********* 4 ")
     try:
       script = Script.objects.get(domain=self.kwargs['domain'], foss_id=self.kwargs['fid'], language_id=self.kwargs['lid'], tutorial_id=self.kwargs['tid'], versionNo=self.kwargs['vid'])
       user=self.request.user
@@ -149,11 +157,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       return None
 
   def get(self, request, fid, tid, lid, vid, domain):
+    print(" TEST ********* 5 ")
     script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
     serialized = ScriptSerializer(script)
     return Response(serialized.data, status=200)
 
   def create(self, request, fid, tid, lid, vid, domain):
+    print(" TEST ********* 6 ")
     details=[]
     create_request_type=request.data['type']
     if not Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)).exists():
@@ -234,6 +244,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     return Response({'status': False, 'message': 'Failed to create script'},status = 500)
 
   def delete(self, request, fid, tid, lid, vid, domain):
+    print(" TEST ********* 6 ")
     try:
       script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
       script.delete()
@@ -242,6 +253,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       return Response({'status': False, 'message': 'Failed to delete script'},status = 403)
 
   def patch(self, request, fid, tid, lid, vid, domain):
+    print(" TEST ********* 7 ")
     try:
       script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
 
