@@ -8,10 +8,11 @@ from datetime import datetime, date, timedelta
 
 
 class ScriptDetailSerializer(serializers.ModelSerializer):
-
   class Meta:
     model = ScriptDetail
     fields = ('id', 'cue', 'narration', 'order', 'comment_status', 'script')
+
+
 
 
 class ScriptSerializer(serializers.ModelSerializer):
