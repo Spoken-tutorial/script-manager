@@ -4,15 +4,12 @@ from .models import ScriptDetail, Script
 
 class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
   def has_permission(self, request, view):
-    print(" TEST *********  9 has_permission()")
     if request.user.is_authenticated:
-      print(" TEST *********  10 has_permission() is_authenticated()")
       domain = view.kwargs['domain']
       fid = view.kwargs['fid']
       lid = view.kwargs['lid']
       return  is_Contributor(domain, fid, lid, request.user.username) or is_DomainReviewer(domain, fid, lid, request.user.username) or is_QualityReviewer(domain, fid, lid, request.user.username)
     if request.user.is_anonymous:
-      print(" TEST *********  11 has_permission() is_anonymous()")
       domain = view.kwargs['domain']
       fid = view.kwargs['fid']
       lid = view.kwargs['lid']
@@ -20,6 +17,7 @@ class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
       vid = view.kwargs['vid']
       return Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid, status=True).exists()
     return False
+      # return True
     
   def has_object_permission(self, request, view, obj):
     obj.user == request.user
