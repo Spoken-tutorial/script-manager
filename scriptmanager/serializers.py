@@ -12,13 +12,7 @@ class ScriptDetailSerializer(serializers.ModelSerializer):
     model = ScriptDetail
     fields = ('id', 'cue', 'narration', 'order', 'comment_status', 'script')
 
-  def create(self, validated_data):
-    script = Script.objects.get(pk=validated_data['script'])
-    validated_data['script']=script
-    s = ScriptDetail.objects.filter(script=script)
-    obj = ScriptDetail.objects.create(**validated_data)
-    s = ScriptDetail.objects.filter(script=script)
-    return obj
+
 
 
 class ScriptSerializer(serializers.ModelSerializer):
