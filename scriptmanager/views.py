@@ -164,6 +164,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     if not Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)).exists():
       print("2 ----------- Script object does not exist ")
       tutorial = get_tutorial_details(domain, fid, lid, tid)
+
+      print("2.1 tutorial -- {tutorial}")
       script = Script.objects.create(
         domain = domain,
         foss = tutorial['foss'],
