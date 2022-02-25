@@ -84,7 +84,9 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
   permission_classes = [ScriptOwnerPermission]
   
   def populatePrevNext(self, script):
+    print(f"15 script ----------- \n{script}\n-----------\n")
     slides = ScriptDetail.objects.filter(script_id=script.id).order_by('order')
+    print(f"16 slides ----------- \n{slides}\n-----------\n")
     i = 0
     for slide in slides:
       if slide.order != 1:
@@ -93,7 +95,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         slide.nextRow = slides[i+1].pk
       slide.save()
       i = i + 1
-
+    print(f"17 for loop iteration over")
   def getUlData(self,data):
     data=str(data).replace("<li></li>","")
     soup=BeautifulSoup(data,'html.parser')
@@ -155,10 +157,12 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     return Response(serialized.data, status=200)
 
   def create(self, request, fid, tid, lid, vid, domain):
+    print("1 ----------- create() called")
     details=[]
     create_request_type=request.data['type']
     
     if not Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)).exists():
+      print("2 ----------- Script object does not exist ")
       tutorial = get_tutorial_details(domain, fid, lid, tid)
       script = Script.objects.create(
         domain = domain,
@@ -172,11 +176,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         user = self.request.user, 
         versionNo=int(vid), 
         editable=True)
+      print("3 ----------- Script object created successfully ")
       if int(vid) > 1:
         prevScript = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)-1) #Get previous version
         prevScript.editable = False
         prevScript.save()
     else:
+      print("4 ----------- script object exists")
       script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
 
     if(create_request_type=='form'):
@@ -184,19 +190,26 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       for item in details:
         item.update( {"script":script.pk})
     elif(create_request_type=='file'):
+      print("5 ----------- create_request_type is file")
       myfile=request.FILES['docs']
       fs = FileSystemStorage()
       uid=uuid.uuid4().hex
       filename = fs.save(uid, myfile)
+      print(f"6 ----------- generated file name is {filename}")
       doc_file=os.getcwd()+'/media/'+filename
+      print(f"7 ----------- doc_file name is {doc_file}")
       #os.system('libreoffice --convert-to html '+doc_file)
       if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" '+doc_file+' --outdir media', shell=True) ==0:
         html_file= 'media/'+uid+".html"
+        print(f"8 ----------- html_file generated - {html_file}")
 
         with open(html_file,'r') as html:
           details=self.scriptsData(html,script)
+          print(f"\n9 ---------------------------------------------\n{details}\n---------------------------------------------\n")
         os.system('rm '+ doc_file + ' '+html_file)
+        print("10 ----------- removed html_file successfully")
       else:
+        print("11 ----------- Failed to create script")
         return Response({'status': False, 'message': 'Failed to create script'},status = 500)
 
     elif (create_request_type=="template"):
@@ -205,9 +218,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     serialized  =  ScriptDetailSerializer(data  =  details,many  =  True) #inserting a details array without iterating
     if serialized.is_valid():
+      print("12 ----------- serialized data is valid")
       serialized.save()
+      print("13 ----------- serialized data is saved")
       if create_request_type=="file" or create_request_type=="template":
+        print("14 ----------- populatePrevNext for file type")
         self.populatePrevNext(script)
+        print("18 ----------- populatePrevNext exit success")
       
       if (create_request_type == 'form'):
         for slide in serialized.data:
@@ -231,7 +248,9 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
           newRow.save()
 
         # script.save()
+      print(f"19 ----------- scripts saved successfully")
       return Response({'status': True, 'data': serialized.data },status = 201)
+    print(f"20 ----------- scripts failed")
     return Response({'status': False, 'message': 'Failed to create script'},status = 500)
 
   def delete(self, request, fid, tid, lid, vid, domain):
