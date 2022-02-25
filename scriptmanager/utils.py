@@ -41,12 +41,14 @@ def get_healthnutrition_tutorials_details(fid, lid, tid):
     # url = health_url+"HealthNutrition/getTutorial/" + str(tid)
     url = health_url+"getTutorial/" + str(tid)
     healthnuritions = requests.get(url)
+    print(f"healthnuritions --- {healthnuritions}")
     healthnuritions = healthnuritions.json()['healthnutrition']
     data = {
         'foss': healthnuritions['tutorial'][0]['foss'], 
         'language':healthnuritions['tutorial'][0]['language'], 
         'tutorial': {'tutorial': healthnuritions['tutorial'][0]['tutorial'], 'outline': healthnuritions['tutorial'][0]['outline']}
         }
+    print(f"data ---- {data}")
     return data
 
 def get_all_foss_languages():
@@ -63,11 +65,14 @@ def get_all_tutorials(domain, fid, lid):
     return tutorials
 
 def get_tutorial_details(domain, fid, lid, tid):
+    print(f"2.1 domain - {domain}, fid - {fid}, lid - {lid}, tid - {tid}")
     tdetails = None
     if domain == "spokentutorials":
         tdetails = get_spokentutorials_tutorials_details(fid, lid, tid)
     elif domain == "healthnutrition":
+        print(f"2.2 domain is healthnutrition")
         tdetails = get_healthnutrition_tutorials_details(fid, lid, tid)
+    print(f"tdetails --- {tdetails}")
     return tdetails
 
 
