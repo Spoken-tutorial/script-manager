@@ -201,7 +201,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       doc_file=os.getcwd()+'/media/'+filename
       print(f"7 ----------- doc_file name is {doc_file}")
       #os.system('libreoffice --convert-to html '+doc_file)
-      if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" '+doc_file+' --outdir media', shell=True) ==0:
+      # if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" '+doc_file+' --outdir media', shell=True) ==0:
+      if subprocess.check_call('export HOME=/tmp && libreoffice --headless --convert-to html '+doc_file+'  --outdir media', shell=True) ==0:
         html_file= 'media/'+uid+".html"
         print(f"8 ----------- html_file generated - {html_file}")
 
