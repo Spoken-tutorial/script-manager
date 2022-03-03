@@ -157,15 +157,15 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     return Response(serialized.data, status=200)
 
   def create(self, request, fid, tid, lid, vid, domain):
-    print("1 ----------- create() called")
+    # print("1 ----------- create() called")
     details=[]
     create_request_type=request.data['type']
     
     if not Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)).exists():
-      print("2 ----------- Script object does not exist ")
+      # print("2 ----------- Script object does not exist ")
       tutorial = get_tutorial_details(domain, fid, lid, tid)
 
-      print("2.1 tutorial -- {tutorial}")
+      # print("2.1 tutorial -- {tutorial}")
       script = Script.objects.create(
         domain = domain,
         foss = tutorial['foss'],
@@ -178,13 +178,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         user = self.request.user, 
         versionNo=int(vid), 
         editable=True)
-      print("3 ----------- Script object created successfully ")
+      # print("3 ----------- Script object created successfully ")
       if int(vid) > 1:
         prevScript = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)-1) #Get previous version
         prevScript.editable = False
         prevScript.save()
     else:
-      print("4 ----------- script object exists")
+      # print("4 ----------- script object exists")
       script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
 
     if(create_request_type=='form'):
@@ -192,12 +192,12 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       for item in details:
         item.update( {"script":script.pk})
     elif(create_request_type=='file'):
-      print("5 ----------- create_request_type is file")
+      # print("5 ----------- create_request_type is file")
       myfile=request.FILES['docs']
       fs = FileSystemStorage()
       uid=uuid.uuid4().hex
       filename = fs.save(uid, myfile)
-      print(f"6 ----------- generated file name is {filename}")
+      # print(f"6 ----------- generated file name is {filename}")
       doc_file=os.getcwd()+'/media/'+filename
       print(f"7 ----------- doc_file name is {doc_file}")
       #os.system('libreoffice --convert-to html '+doc_file)
@@ -207,11 +207,11 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
         with open(html_file,'r') as html:
           details=self.scriptsData(html,script)
-          print(f"\n9 ---------------------------------------------\n{details}\n---------------------------------------------\n")
+          # print(f"\n9 ---------------------------------------------\n{details}\n---------------------------------------------\n")
         os.system('rm '+ doc_file + ' '+html_file)
         print("10 ----------- removed html_file successfully")
       else:
-        print("11 ----------- Failed to create script")
+        # print("11 ----------- Failed to create script")
         return Response({'status': False, 'message': 'Failed to create script'},status = 500)
 
     elif (create_request_type=="template"):
@@ -219,9 +219,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       details=self.scriptsData(data,script)
 
     serialized  =  ScriptDetailSerializer(data  =  details,many  =  True) #inserting a details array without iterating
+    print(f"details ******************* {details}")
     if serialized.is_valid():
       print("12 ----------- serialized data is valid")
+      
       serialized.save()
+      # sd = ScriptDetail.objects.create(cue="நிறைந்த நிறைந்த",narration="நிறைந்த நிறைந்த",order=1,script=script)
+
       print("13 ----------- serialized data is saved")
       if create_request_type=="file" or create_request_type=="template":
         print("14 ----------- populatePrevNext for file type")
