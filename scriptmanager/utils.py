@@ -42,16 +42,16 @@ def get_healthnutrition_tutorials_details(fid, lid, tid):
     # url = health_url+"HealthNutrition/getTutorial/" + str(tid)
     url = health_url+"getTutorial/" + str(tid)
     healthnuritions = requests.get(url)
-    print(f"healthnuritions --- {healthnuritions}")
+    # print(f"healthnuritions --- {healthnuritions}")
     # healthnuritions = healthnuritions.json()['healthnutrition']
     healthnuritions_all = healthnuritions.json()
-    print(f"healthnuritions_all 2******** {healthnuritions_all}")
+    # print(f"healthnuritions_all 2******** {healthnuritions_all}")
     healthnuritions = healthnuritions_all['healthnutrition']
     
     encodedUnicode = json.dumps(healthnuritions_all, ensure_ascii=False)
     decoded = json.loads(encodedUnicode)
     healthnuritions = decoded['healthnutrition']
-    print
+    # print
     data = {
         'foss': healthnuritions['tutorial'][0]['foss'], 
         'language':healthnuritions['tutorial'][0]['language'], 
@@ -59,7 +59,7 @@ def get_healthnutrition_tutorials_details(fid, lid, tid):
         }
     print(f"\n\n*****************************************************************")
     print(f"\n\n*****************************************************************")
-    print(f"data ******************************************************************{data}")
+    # print(f"data ******************************************************************{data}")
     
     return data
 
@@ -77,14 +77,14 @@ def get_all_tutorials(domain, fid, lid):
     return tutorials
 
 def get_tutorial_details(domain, fid, lid, tid):
-    print(f"2.1 domain - {domain}, fid - {fid}, lid - {lid}, tid - {tid}")
+    # print(f"2.1 domain - {domain}, fid - {fid}, lid - {lid}, tid - {tid}")
     tdetails = None
     if domain == "spokentutorials":
         tdetails = get_spokentutorials_tutorials_details(fid, lid, tid)
     elif domain == "healthnutrition":
         print(f"2.2 domain is healthnutrition")
         tdetails = get_healthnutrition_tutorials_details(fid, lid, tid)
-    print(f"tdetails --- {tdetails}")
+    # print(f"tdetails --- {tdetails}")
     return tdetails
 
 
