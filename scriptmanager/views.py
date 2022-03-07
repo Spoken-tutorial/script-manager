@@ -84,9 +84,9 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
   permission_classes = [ScriptOwnerPermission]
   
   def populatePrevNext(self, script):
-    print(f"15 script ----------- \n{script}\n-----------\n")
+    # print(f"15 script ----------- \n{script}\n-----------\n")
     slides = ScriptDetail.objects.filter(script_id=script.id).order_by('order')
-    print(f"16 slides ----------- \n{slides}\n-----------\n")
+    # print(f"16 slides ----------- \n{slides}\n-----------\n")
     i = 0
     for slide in slides:
       if slide.order != 1:
@@ -221,7 +221,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       details=self.scriptsData(data,script)
 
     serialized  =  ScriptDetailSerializer(data  =  details,many  =  True) #inserting a details array without iterating
-    print(f"details ******************* {details}")
+    # print(f"details ******************* {details}")
     for item in details:
       print("saving ScriptDetail data ************ ")
       sd = ScriptDetail.objects.create(cue=item.get('cue'),narration=item.get('narration'),order=1,script=script)
@@ -428,7 +428,7 @@ class CommentCreateAPIView(generics.ListCreateAPIView):
       if script_data.comment_status == False:
         script_data.comment_status=True
         script_data.save()
-      print(request.data['comment'])
+      # print(request.data['comment'])
       Comment.objects.create(comment=request.data['comment'],user=self.request.user,script_details=script_data)
       return Response({'status': True},status = 202)
     except:
