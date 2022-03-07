@@ -114,6 +114,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
 
   def scriptsData(self, html,script):
+
     soup=BeautifulSoup(html,'html.parser')
     table=soup.find("table") 
     # print(table)
@@ -201,8 +202,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       doc_file=os.getcwd()+'/media/'+filename
       print(f"7 ----------- doc_file name is {doc_file}")
       #os.system('libreoffice --convert-to html '+doc_file)
-      # if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" '+doc_file+' --outdir media', shell=True) ==0:
-      if subprocess.check_call('export HOME=/tmp && libreoffice --headless --convert-to html '+doc_file+'  --outdir media', shell=True) ==0:
+      if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" '+doc_file+' --outdir media', shell=True) ==0:
+      # if subprocess.check_call('export HOME=/tmp && libreoffice --headless --convert-to html '+doc_file+'  --outdir media', shell=True) ==0:
         html_file= 'media/'+uid+".html"
         print(f"8 ----------- html_file generated - {html_file}")
 
@@ -221,10 +222,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     serialized  =  ScriptDetailSerializer(data  =  details,many  =  True) #inserting a details array without iterating
     print(f"details ******************* {details}")
+    for item in details:
+      print("saving ScriptDetail data ************ ")
+      sd = ScriptDetail.objects.create(cue=item.get('cue'),narration=item.get('narration'),order=1,script=script)
     if serialized.is_valid():
       print("12 ----------- serialized data is valid")
       
-      serialized.save()
+      # serialized.save()
       # sd = ScriptDetail.objects.create(cue="நிறைந்த நிறைந்த",narration="நிறைந்த நிறைந்த",order=1,script=script)
 
       print("13 ----------- serialized data is saved")
