@@ -114,6 +114,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
 
   def scriptsData(self, html,script):
+
     soup=BeautifulSoup(html,'html.parser')
     table=soup.find("table") 
     # print(table)
@@ -221,10 +222,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     serialized  =  ScriptDetailSerializer(data  =  details,many  =  True) #inserting a details array without iterating
     print(f"details ******************* {details}")
+    for item in details:
+      print("saving ScriptDetail data ************ ")
+      sd = ScriptDetail.objects.create(cue=item.get('cue'),narration=item.get('narration'),order=1,script=script)
     if serialized.is_valid():
       print("12 ----------- serialized data is valid")
       
-      serialized.save()
+      # serialized.save()
       # sd = ScriptDetail.objects.create(cue="நிறைந்த நிறைந்த",narration="நிறைந்த நிறைந்த",order=1,script=script)
 
       print("13 ----------- serialized data is saved")
