@@ -22,7 +22,7 @@ export class ScriptViewComponent implements OnInit {
   private vid: number;
   private domain: string;
   private fid: number;
-  private titleVisualCue: string;
+  public titleVisualCue: string;
   public comment = false;
   public revision = false;
   public comments: any = [];
