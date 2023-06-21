@@ -20,6 +20,7 @@ export class ScriptSlideComponent implements OnInit {
   @Input() view: boolean = false;
   @Input() nav:any;
   @Input() autosave: boolean = false;
+  @Input() titleVisualCue: string;
   public comment = false;
   public ckEditorCue: boolean = false;
   public ckEditorNarration: boolean = false;

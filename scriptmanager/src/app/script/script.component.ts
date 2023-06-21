@@ -19,11 +19,12 @@ export class ScriptComponent implements OnInit {
   @Input() displaySave: boolean = false;
   @Input() autosave: boolean = false;
   public tid;
-  public lid;
+  public lid: number;
   public vid;
   public tutorialName: any;
   public domain;
   public fid;
+  public titleVisualCue: string;
 
   constructor(public router: Router, public route: ActivatedRoute, public createscriptService: CreateScriptService) { }
 
@@ -180,6 +181,7 @@ export class ScriptComponent implements OnInit {
     this.vid = this.route.snapshot.params['vid']
     this.domain = this.route.snapshot.params['domain']
     this.fid = this.route.snapshot.params['fid']
+    this.titleVisualCue = this.lid != 22 ? 'Time' : 'Visual Cue';
   }
 
 }
