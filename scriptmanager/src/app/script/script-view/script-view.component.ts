@@ -22,6 +22,7 @@ export class ScriptViewComponent implements OnInit {
   private vid: number;
   private domain: string;
   private fid: number;
+  public titleVisualCue: string;
   public comment = false;
   public revision = false;
   public comments: any = [];
@@ -274,6 +275,7 @@ export class ScriptViewComponent implements OnInit {
     this.vid = this.route.snapshot.params['vid'];
     this.domain = this.route.snapshot.params['domain'];
     this.fid = this.route.snapshot.params['fid'];
+    this.titleVisualCue = this.lid != 22 ? 'Time' : 'Visual Cue';
     this.viewScript();
   }
 
