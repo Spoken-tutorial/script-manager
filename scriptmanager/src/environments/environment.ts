@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  scriptVersionsAllowed: 2,
-  apiUrlScript:'https://scriptmanager.spoken-tutorial.org/scripts/api'
+  scriptVersionsAllowed: 4,
+  apiUrlScript:'/scripts/api'
 };
 
 /*
