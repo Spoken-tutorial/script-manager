@@ -119,11 +119,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     details=[]
     count=-1
     for row in table.find_all('tr'):
-      count+=1
       if row.find_all("th"):
         columns = row.find_all('th')
       elif row.find_all('td'):  
         columns = row.find_all('td')
+      else:
+        continue
+      count+=1
       try:
         details.append({"order": count,"cue": self.getUlData(columns[0]),"narration": self.getUlData(columns[1]),"script":script.pk})
       except:
@@ -188,7 +190,6 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       uid=uuid.uuid4().hex
       filename = fs.save(uid, myfile)
       doc_file=os.getcwd()+'/media/'+filename
-      #os.system('libreoffice --convert-to html '+doc_file)
       # don't remove below comment
       # if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" '+doc_file+' --outdir media', shell=True) ==0:
       if subprocess.check_call('export HOME=/tmp && libreoffice --headless --convert-to html '+doc_file+'  --outdir media', shell=True) ==0:
