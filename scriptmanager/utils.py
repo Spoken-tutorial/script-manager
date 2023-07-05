@@ -12,7 +12,6 @@ def get_spokentutorials_foss():
 
 def get_healthnuritions_foss():
     try:
-        # url = health_url + "HealthNutrition/getCatAndLan"
         url = health_url + "getCatAndLan"
         healthnuritions = requests.get(url)
         healthnuritions = healthnuritions.json()['healthnutrition']
@@ -39,27 +38,19 @@ def get_spokentutorials_tutorials_details(fid, lid, tid):
     return spokentutorials
 
 def get_healthnutrition_tutorials_details(fid, lid, tid):
-    # url = health_url+"HealthNutrition/getTutorial/" + str(tid)
     url = health_url+"getTutorial/" + str(tid)
     healthnuritions = requests.get(url)
-    # print(f"healthnuritions --- {healthnuritions}")
-    # healthnuritions = healthnuritions.json()['healthnutrition']
     healthnuritions_all = healthnuritions.json()
-    # print(f"healthnuritions_all 2******** {healthnuritions_all}")
     healthnuritions = healthnuritions_all['healthnutrition']
     
     encodedUnicode = json.dumps(healthnuritions_all, ensure_ascii=False)
     decoded = json.loads(encodedUnicode)
     healthnuritions = decoded['healthnutrition']
-    # print
     data = {
         'foss': healthnuritions['tutorial'][0]['foss'], 
         'language':healthnuritions['tutorial'][0]['language'], 
         'tutorial': {'tutorial': healthnuritions['tutorial'][0]['tutorial'], 'outline': healthnuritions['tutorial'][0]['outline']}
         }
-    print(f"\n\n*****************************************************************")
-    print(f"\n\n*****************************************************************")
-    # print(f"data ******************************************************************{data}")
     
     return data
 
@@ -77,14 +68,12 @@ def get_all_tutorials(domain, fid, lid):
     return tutorials
 
 def get_tutorial_details(domain, fid, lid, tid):
-    # print(f"2.1 domain - {domain}, fid - {fid}, lid - {lid}, tid - {tid}")
     tdetails = None
     if domain == "spokentutorials":
         tdetails = get_spokentutorials_tutorials_details(fid, lid, tid)
     elif domain == "healthnutrition":
         print(f"2.2 domain is healthnutrition")
         tdetails = get_healthnutrition_tutorials_details(fid, lid, tid)
-    # print(f"tdetails --- {tdetails}")
     return tdetails
 
 
@@ -92,18 +81,25 @@ def get_tutorial_details(domain, fid, lid, tid):
 
 def get_spoken_roles(fid, lid, username):
     url = spoken_Url+"api/script/roles/"+str(fid)+"/"+str(lid)+"/"+username+"/"
-    spoken_roles = requests.get(url)
-    spoken_roles = spoken_roles.json()['spokentutorials']
-    return spoken_roles['roles']
+    try:
+        spoken_roles = requests.get(url)
+        spoken_roles = spoken_roles.json()['spokentutorials']
+        return spoken_roles['roles']
+    except Exception as e:
+        print(" EXCEPTION ****  15 spoken_roles : {} {}".format(url, str(e)))
+        return None
 
 def get_health_roles(fid, lid, username):
-    # url = health_url+"HealthNutrition/getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
     print(" TEST *********  14 get_health_roles")
     url = health_url+"getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
-    health_roles = requests.get(url)
-    health_roles = health_roles.json()['healthnutrition']
-    print(" TEST *********  15 health_roles : {}".format(health_roles))
-    return health_roles['roles']
+    try:
+        health_roles = requests.get(url)
+        health_roles = health_roles.json()['healthnutrition']
+        print(" TEST *********  15 health_roles : {}".format(health_roles))
+        return health_roles['roles']
+    except Exception as e:
+        print(" EXCEPTION ****  15 health_roles : {} {}".format(url, str(e)))
+        return None
 
 def get_roles(domain, fid, lid, username):
     print(" TEST *********  13 get_roles")
