@@ -11,6 +11,18 @@
             </div>
           </ng-container>
         </p>
+        <p *ngIf="script.message">
+          <ng-container *ngIf="script.status">
+            <div class="status-message">
+                {{ script.message }}
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!script.status">
+            <div class="status-error-message">
+                {{ script.message }}
+            </div>
+          </ng-container>
+        </p>
         <div class="field is-grouped is-grouped-multiline">
           <!-- <div class="control">
             <b>Suggested Title: </b>{{ script.suggested_title }}

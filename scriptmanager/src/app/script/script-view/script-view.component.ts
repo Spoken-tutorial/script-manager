@@ -72,6 +72,7 @@ export class ScriptViewComponent implements OnInit {
       .subscribe(
         (res) => {
           this.script.status = res['status'];
+          this.script.message = res['message'];
         },
         console.error
       );

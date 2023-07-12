@@ -66,16 +66,16 @@ class CanRevisePermission(IsAuthenticatedOrReadOnly):
     return not obj.script.status
 
 def is_Contributor(domain, fid, lid, username):
-  print(" TEST *********  12 is_Contributor")
   roles = get_roles(domain, fid, lid, username)
   print(" TEST *********  16 roles : {}".format(roles))
-  print(" TEST *********  16 roles : {}".format('Contributor' in roles))
   return 'Contributor' in roles
 
 def is_DomainReviewer(domain, fid, lid, username):
   roles = get_roles(domain, fid, lid, username)
+  print(" TEST *********  16 roles : {}".format(roles))
   return 'Domain-Reviewer' in roles
 
 def is_QualityReviewer(domain, fid, lid, username):
   roles = get_roles(domain, fid, lid, username)
+  print(" TEST *********  16 roles : {}".format(roles))
   return 'Quality-Reviewer' in roles

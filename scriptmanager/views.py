@@ -17,35 +17,31 @@ from datetime import datetime,timedelta
 import time
 from .permissions import is_Contributor,is_DomainReviewer,is_QualityReviewer
 import uuid
-import subprocess 
+import subprocess
 from .permissions import ScriptOwnerPermission, ScriptModifyPermission, PublishedScriptPermission, ReviewScriptPermission, CommentOwnerPermission, CanCommentPermission, CanRevisePermission
 from django.utils import timezone
 from .utils import get_all_foss_languages, get_all_tutorials, get_tutorial_details
 
 def custom_jwt_payload_handler(user):
   payload = default_jwt_payload_handler(user)
-
-  #payload['is_domainreviewer'] = is_DomainReviewer(user)
-  #payload['is_qualityreviewer'] = is_QualityReviewer(user)
-
   return payload
 
 def index(request):
   token = ''
   if request.user.is_authenticated:
-    jwt_payload_handler  =  api_settings.JWT_PAYLOAD_HANDLER
-    jwt_encode_handler  =  api_settings.JWT_ENCODE_HANDLER
-    payload  =  jwt_payload_handler(request.user)
-    token  =  jwt_encode_handler(payload) 
-  
+    jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+    jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+    payload = jwt_payload_handler(request.user)
+    token = jwt_encode_handler(payload)
+
   return render(request, 'scriptmanager/index.html', {'token': token})
-  
+
 
 class FossLanguageList(generics.ListAPIView):
 
   def get(self, request):
     data = get_all_foss_languages()
-    return Response({ 'data':  data}, status=200)
+    return Response({ 'data': data}, status=200)
 
 
 class TutorialDetailList(generics.ListAPIView):
@@ -56,7 +52,7 @@ class TutorialDetailList(generics.ListAPIView):
       for k, v in enumerate(tutorials['tutorials']):
         script_exist, script = self.get_script_exist(v['id'])
         v['script_status'] = script_exist
-        v['published'] =  script.status if script_exist else False
+        v['published'] = script.status if script_exist else False
         if script_exist:
           v['published_by'] = script.published_by.username if script.published_by else None
         v['published_on'] = script.published_on if script_exist else None
@@ -78,11 +74,11 @@ class TutorialDetailList(generics.ListAPIView):
     else:
       return False, script
 
-  
+
 class ScriptCreateAPIView(generics.ListCreateAPIView):
   serializer_class = ScriptDetailSerializer
   permission_classes = [ScriptOwnerPermission]
-  
+
   def populatePrevNext(self, script):
     slides = ScriptDetail.objects.filter(script_id=script.id).order_by('order')
     i = 0
@@ -101,10 +97,10 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       for data in all_data:
         for p in data.find_all('p'):
           p.name='li'
-          
+
     if soup.find_all('ol'):
       all_data=soup.find_all('ol')
-      for data in all_data: 
+      for data in all_data:
         for p in data.find_all('p'):
           p.name='li'
     return str(soup)
@@ -113,7 +109,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
   def scriptsData(self, html,script):
 
     soup=BeautifulSoup(html,'html.parser')
-    table=soup.find("table") 
+    table=soup.find("table")
     if(table.find("tbody")):
       table=table.find("tbody")
     details=[]
@@ -121,7 +117,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     for row in table.find_all('tr'):
       if row.find_all("th"):
         columns = row.find_all('th')
-      elif row.find_all('td'):  
+      elif row.find_all('td'):
         columns = row.find_all('td')
       else:
         continue
@@ -137,7 +133,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     try:
       script = Script.objects.get(domain=self.kwargs['domain'], foss_id=self.kwargs['fid'], language_id=self.kwargs['lid'], tutorial_id=self.kwargs['tid'], versionNo=self.kwargs['vid'])
       user=self.request.user
-      if is_DomainReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'],  user.username) or is_QualityReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'],  user.username)  or script.user == user or script.status == True:
+      if is_DomainReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'], user.username) or is_QualityReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'], user.username) or script.user == user or script.status == True:
         script_details = ScriptDetail.objects.filter(script = script)
         ordering = script.ordering
 
@@ -145,7 +141,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
           ordering = ordering.split(',')
           ordering = list(map(int, ordering))
           script_details = sorted(script_details, key=lambda s: ordering.index(s.pk))
-        
+
         return script_details
     except:
       return None
@@ -158,7 +154,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
   def create(self, request, fid, tid, lid, vid, domain):
     details=[]
     create_request_type=request.data['type']
-    
+
     if not Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)).exists():
       tutorial = get_tutorial_details(domain, fid, lid, tid)
       script = Script.objects.create(
@@ -170,8 +166,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         tutorial = tutorial['tutorial']['tutorial'],
         outline = tutorial['tutorial']['outline'],
         tutorial_id = int(tid),
-        user = self.request.user, 
-        versionNo=int(vid), 
+        user = self.request.user,
+        versionNo=int(vid),
         editable=True)
       if int(vid) > 1:
         prevScript = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)-1) #Get previous version
@@ -192,7 +188,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       doc_file=os.getcwd()+'/media/'+filename
       # don't remove below comment
       # if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" '+doc_file+' --outdir media', shell=True) ==0:
-      if subprocess.check_call('export HOME=/tmp && libreoffice --headless --convert-to html '+doc_file+'  --outdir media', shell=True) ==0:
+      if subprocess.check_call('export HOME=/tmp && libreoffice --headless --convert-to html '+doc_file+' --outdir media', shell=True) ==0:
         html_file= 'media/'+uid+".html"
         with open(html_file,'r') as html:
           details=self.scriptsData(html,script)
@@ -204,14 +200,14 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
       data=request.data['details']
       details=self.scriptsData(data,script)
 
-    serialized  =  ScriptDetailSerializer(data  =  details,many  =  True) #inserting a details array without iterating
+    serialized = ScriptDetailSerializer(data = details,many = True) #inserting a details array without iterating
 
     if serialized.is_valid():
       serialized.save()
       if create_request_type=="file" or create_request_type=="template":
         self.populatePrevNext(script)
-        
-      
+
+
       if (create_request_type == 'form'):
         for slide in serialized.data:
           slideid = str(slide.get('id'))
@@ -221,7 +217,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
         if 'prevSlideID' in request.data:
           prevSlideID = request.data['prevSlideID']
-          newRow = ScriptDetail.objects.get(pk=int(slideid))          
+          newRow = ScriptDetail.objects.get(pk=int(slideid))
           q1 = ScriptDetail.objects.get(pk=prevSlideID) #Previous row
           if q1.nextRow:
             q2 = ScriptDetail.objects.get(pk=q1.nextRow) #Next row
@@ -252,39 +248,39 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         suggested_title = request.data['suggested_title']
         script.suggested_title = suggested_title
         script.save()
-        return Response({'suggested_title': suggested_title, 'message': 'Successfully updated suggested title'}, status = 200) 
+        return Response({'suggested_title': suggested_title, 'message': 'Successfully updated suggested title'}, status = 200)
 
       if 'status' in request.data:
-        if  not is_DomainReviewer(domain, fid, lid, request.user.username) or not is_QualityReviewer(domain, fid, lid, request.user.username):
-          return Response({'message': 'You do not have review permission.'}, status = 403) 
+        if not is_DomainReviewer(domain, fid, lid, request.user.username) and not is_QualityReviewer(domain, fid, lid, request.user.username):
+          return Response({'status': False, 'message': 'You do not have review permission.'}, status = 403)
         status = request.data['status']
         script.status = status
-      
+
         script.published_by = request.user
         script.published_on = timezone.now()
         if status == False:
           script.published_by = None
           script.published_on = None
         script.save()
-        return Response({'status': status, 'message': 'Successfully changed status of script'}, status = 200) 
+        return Response({'status': status, 'message': 'Successfully changed status of script'}, status = 200)
     except:
-      return Response({'message': 'Failed to change status'}, status = 500) 
+      return Response({'status': False, 'message': 'Failed to change status'}, status = 500)
 
 class ScriptDetailAPIView(generics.ListAPIView):
   permission_classes = [ScriptModifyPermission]
 
   def patch(self, request, script_detail_id):
     try:
-      script_details  =  self.request.data
+      script_details = self.request.data
       script_details['id']=int(script_detail_id)
-      script  =  ScriptDetail.objects.get(pk=script_details['id'])
-      serializer  =  ScriptDetailSerializer(script, data = script_details)
+      script = ScriptDetail.objects.get(pk=script_details['id'])
+      serializer = ScriptDetailSerializer(script, data = script_details)
       if serializer.is_valid():
         serializer.save()
         return Response({'status': True},status = 200)
-      return Response({'status': False, 'message': 'Failed to update row'},status = 500)       
+      return Response({'status': False, 'message': 'Failed to update row'},status = 500)
     except:
-      return Response({'status': False, 'message': 'Failed to update row'},status = 403)       
+      return Response({'status': False, 'message': 'Failed to update row'},status = 403)
 
   def delete(self, request, script_detail_id):
     try:
@@ -300,13 +296,13 @@ class ScriptDetailAPIView(generics.ListAPIView):
         q2.prevRow = script_slide.prevRow
         q2.save()
 
-      if not ScriptDetail.objects.filter(script_id = script_slide.script.pk).exists(): 
+      if not ScriptDetail.objects.filter(script_id = script_slide.script.pk).exists():
         Script.objects.delete(pk=script_slide.script.pk)
 
       script_slide.delete()
-      return Response({'status': True},status = 202) 
+      return Response({'status': True},status = 202)
     except:
-      return Response({'status': False, 'message': 'Failed to delete row'},status = 403)       
+      return Response({'status': False, 'message': 'Failed to delete row'},status = 403)
 
 class PublishedScriptAPI(APIView):
   # permission_classes = [PublishedScriptPermission]
@@ -318,7 +314,7 @@ class PublishedScriptAPI(APIView):
 
 class ForReviewScriptAPI(APIView):
   permission_classes = [ReviewScriptPermission]
-  
+
   def get(self, request):
     scripts = Script.objects.filter(status=False, editable=True)
     data = ScriptListSerializer(scripts, many=True).data
@@ -403,7 +399,7 @@ class CommentCreateAPIView(generics.ListCreateAPIView):
       Comment.objects.create(comment=request.data['comment'],user=self.request.user,script_details=script_data)
       return Response({'status': True},status = 202)
     except:
-      return Response({'status': False, 'message': 'Not allowed to comment'},status = 500)       
+      return Response({'status': False, 'message': 'Not allowed to comment'},status = 500)
 
 class CommentAPI(generics.ListAPIView):
   permission_classes = [CommentOwnerPermission]
@@ -417,7 +413,7 @@ class CommentAPI(generics.ListAPIView):
         serializer.save()
         return Response({'message': 'Updated the comment', 'data': serializer.data})
     except:
-      return Response({'message': 'Unauthorized request to update comment'}, status=500)
+      return Response({'status': False, 'message': 'Unauthorized request to update comment'}, status=500)
 
   def delete(self, request, comment_id):
     try:
@@ -430,7 +426,7 @@ class CommentAPI(generics.ListAPIView):
       script.save()
       return Response({'status': True}, status=200)
     except:
-      return Response({'message': 'Unauthorized request to update comment'}, status=403)
+      return Response({'status': False, 'message': 'Unauthorized request to update comment'}, status=403)
 
 class ReversionListView(generics.ListAPIView):
   serializer_class = ReversionSerializer
