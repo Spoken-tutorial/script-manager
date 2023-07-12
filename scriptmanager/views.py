@@ -68,8 +68,9 @@ class TutorialDetailList(generics.ListAPIView):
 
   def get_script_exist(self, tid):
     script = None
-    if Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=int(tid), language_id=int(self.kwargs['lid'])).exists():
-      script = Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=tid, language_id=int(self.kwargs['lid'])).order_by('-versionNo').first()
+    scripts = Script.objects.filter(domain=self.kwargs['domain'],foss_id=int(self.kwargs['fid']),tutorial_id=int(tid), language_id=int(self.kwargs['lid']))
+    if scripts.exists():
+      script = scripts.order_by('-versionNo').first()
       return True, script
     else:
       return False, script
@@ -155,7 +156,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
     details=[]
     create_request_type=request.data['type']
 
-    if not Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid)).exists():
+    scripts = Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
+    if not scripts.exists():
       tutorial = get_tutorial_details(domain, fid, lid, tid)
       script = Script.objects.create(
         domain = domain,
@@ -174,7 +176,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         prevScript.editable = False
         prevScript.save()
     else:
-      script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
+      script = scripts.first()
 
     if(create_request_type=='form'):
       details = request.data['details']
