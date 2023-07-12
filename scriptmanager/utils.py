@@ -90,7 +90,6 @@ def get_spoken_roles(fid, lid, username):
         return None
 
 def get_health_roles(fid, lid, username):
-    print(" TEST *********  14 get_health_roles")
     url = health_url+"getRolesOnCatLanUser/" +str(fid)+"/"+str(lid)+"/"+username
     try:
         health_roles = requests.get(url)
@@ -102,7 +101,6 @@ def get_health_roles(fid, lid, username):
         return None
 
 def get_roles(domain, fid, lid, username):
-    print(" TEST *********  13 get_roles")
     roles = None
     if domain == "spokentutorials":
         roles = get_spoken_roles(fid, lid, username)
