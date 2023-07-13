@@ -172,16 +172,16 @@
             </a>
           </div>
 
-          <div  class="control" *ngIf="script?.status" [swal]="{ title: 'Un-publish Tutorial',
+          <div  class="control" *ngIf="script?.status" [swal]="{ title: 'Unpublish Tutorial',
                 text: 'You are about to unpublish this tutorial. By doing this only the contributors and reviewers of the FOSS will be able to view and edit it. Are you sure?',
                 type: 'warning',
                 showCancelButton: 'true',
                 focusCancel: 'true',
-                confirmButtonText: 'Yes! Un-Publish it.',
+                confirmButtonText: 'Yes! Unpublish it.',
                 cancelButtonText: 'No!'
               }" (confirm)="onPublishChange(false)">
             <a *ngIf="authService.isAuthenticated()">
-              <app-badge-button faClass="far fa-eye-slash" textClass="is-danger" text="Un-Publish" textTooltip="Click here to un-publish the script"></app-badge-button>
+              <app-badge-button faClass="far fa-eye-slash" textClass="is-danger" text="Unpublish" textTooltip="Click here to unpublish the script"></app-badge-button>
             </a>
           </div>
         </div>
