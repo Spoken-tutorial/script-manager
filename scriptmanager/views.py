@@ -248,7 +248,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
             if 'status' in request.data:
                 if not is_DomainReviewer(domain, fid, lid, request.user.username) and not is_QualityReviewer(domain, fid, lid, request.user.username):
-                    return Response({'status': False, 'message': 'You do not have review permission.'}, status=403)
+                    return Response({'message': 'You do not have review permission.'}, status=200)
                 status = request.data['status']
                 script.status = status
 
@@ -260,7 +260,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
                 script.save()
                 return Response({'status': status, 'message': 'Successfully changed status of script'}, status=200)
         except Exception:
-            return Response({'status': False, 'message': 'Failed to change status'}, status=500)
+            return Response({'message': 'Failed to change status'}, status=200)
 
 
 class ScriptDetailAPIView(generics.ListAPIView):
@@ -415,7 +415,7 @@ class CommentAPI(generics.ListAPIView):
                 serializer.save()
                 return Response({'message': 'Updated the comment', 'data': serializer.data})
         except Exception:
-            return Response({'status': False, 'message': 'Unauthorized request to update comment'}, status=500)
+            return Response({'message': 'Unauthorized request to update comment'}, status=500)
 
     def delete(self, request, comment_id):
         try:
@@ -428,7 +428,7 @@ class CommentAPI(generics.ListAPIView):
             script.save()
             return Response({'status': True}, status=200)
         except Exception:
-            return Response({'status': False, 'message': 'Unauthorized request to update comment'}, status=403)
+            return Response({'message': 'Unauthorized request to update comment'}, status=403)
 
 
 class ReversionListView(generics.ListAPIView):

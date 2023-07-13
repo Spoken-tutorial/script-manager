@@ -71,8 +71,12 @@ export class ScriptViewComponent implements OnInit {
     this.createscriptService.changeScriptStatus(this.domain, this.fid, this.tid, this.lid, this.vid, status)
       .subscribe(
         (res) => {
-          this.script.status = res['status'];
-          this.script.message = res['message'];
+          if (res.hasOwnProperty('status')) {
+            this.script.status = res['status'];
+            this.script.message = res['message'];
+          } else {
+            this.script.message = 'Error: ' + res['message'];
+          }
         },
         console.error
       );
