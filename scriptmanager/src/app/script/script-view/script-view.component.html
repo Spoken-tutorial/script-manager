@@ -12,12 +12,12 @@
           </ng-container>
         </p>
         <p *ngIf="script.message">
-          <ng-container *ngIf="script.status">
+          <ng-container *ngIf="!script.message.startsWith('Error: ')">
             <div class="status-message">
                 {{ script.message }}
             </div>
           </ng-container>
-          <ng-container *ngIf="!script.status">
+          <ng-container *ngIf="script.message.startsWith('Error: ')">
             <div class="status-error-message">
                 {{ script.message }}
             </div>
