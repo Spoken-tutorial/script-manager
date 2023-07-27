@@ -127,7 +127,11 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         try:
-            script = Script.objects.get(domain=self.kwargs['domain'], foss_id=self.kwargs['fid'], language_id=self.kwargs['lid'], tutorial_id=self.kwargs['tid'], versionNo=self.kwargs['vid'])
+            vid = self.kwargs['vid']
+            if vid != '0':
+                script = Script.objects.get(domain=self.kwargs['domain'], foss_id=self.kwargs['fid'], language_id=self.kwargs['lid'], tutorial_id=self.kwargs['tid'], versionNo=vid)
+            else:
+                script = Script.objects.filter(domain=self.kwargs['domain'], foss_id=self.kwargs['fid'], language_id=self.kwargs['lid'], tutorial_id=self.kwargs['tid'], status=True).order_by('-versionNo').first()
             user = self.request.user
             if is_DomainReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'], user.username) or is_QualityReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'], user.username) or script.user == user or script.status:
                 script_details = ScriptDetail.objects.filter(script=script)
@@ -143,11 +147,17 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
             return None
 
     def get(self, request, fid, tid, lid, vid, domain):
-        script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
+        if vid != '0':
+            script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
+        else:
+            script = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, status=True).order_by('-versionNo').first()
         serialized = ScriptSerializer(script)
         return Response(serialized.data, status=200)
 
     def create(self, request, fid, tid, lid, vid, domain):
+        if vid == '0':
+            return Response({'status': False, 'message': 'Cannot create script 0'}, status=500)
+
         details = []
         create_request_type = request.data['type']
 
@@ -229,6 +239,9 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         return Response({'status': False, 'message': 'Failed to create script'}, status=500)
 
     def delete(self, request, fid, tid, lid, vid, domain):
+        if vid == '0':
+            return Response({'status': False, 'message': 'Cannot delete script 0'}, status=500)
+
         try:
             script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
             script.delete()
@@ -237,6 +250,9 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
             return Response({'status': False, 'message': 'Failed to delete script'}, status=403)
 
     def patch(self, request, fid, tid, lid, vid, domain):
+        if vid == '0':
+            return Response({'status': False, 'message': 'Cannot patch script 0'}, status=500)
+
         try:
             script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
 

@@ -16,7 +16,11 @@ class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
             lid = view.kwargs['lid']
             tid = view.kwargs['tid']
             vid = view.kwargs['vid']
-            return Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid, status=True).exists()
+            if vid != '0':
+                scripts = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid, status=True)
+            else:
+                scripts = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, status=True)
+            return scripts.exists()
         return False
 
     def has_object_permission(self, request, view, obj):
