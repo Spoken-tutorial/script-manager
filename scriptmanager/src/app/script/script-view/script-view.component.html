@@ -36,7 +36,7 @@
       </div>
       <div class="column is-4">
         <div class="field is-grouped is-grouped-multiline">
-          <div class="control" *ngIf="authService.isAuthenticated()">
+          <div class="control" *ngIf="authService.isAuthenticated() && vid != 0">
             <a routerLink="/">
               <app-badge-button faClass="fa fa-chevron-left" textClass="is-info" text="Go Back" textTooltip="Click here to go back to the list of tutorials in this FOSS"></app-badge-button>
             </a>
@@ -52,7 +52,7 @@
             </a>
           </div>
         </div>
-        <!-- <div *ngIf="authService.isAuthenticated()">
+        <!-- <div *ngIf="authService.isAuthenticated() && vid != 0">
           <div class="select" title="Click here to choose the version number for viewing the script">
             <select (change)="onScriptVersionChange($event.target.value)">
               <option *ngFor="let version of script.versions; let i = index" [value]="version">
@@ -131,7 +131,7 @@
                 <td>{{ i+1 }} <span *ngIf="slide.comment_status" class="dot"></span></td>
                 <td class="content" innerHTML="{{ slide.cue }}"></td>
                 <td class="content" innerHTML="{{ slide.narration }}"></td>
-                <td *ngIf="authService.isAuthenticated()">
+                <td *ngIf="authService.isAuthenticated() && vid != 0">
                   <button class="button heading" (click)="viewComment(i)" title="Click to add/view comments">
                     <i class="fa fa-comments"></i>&nbsp;
                   </button>
@@ -180,7 +180,7 @@
                 confirmButtonText: 'Yes! Unpublish it.',
                 cancelButtonText: 'No!'
               }" (confirm)="onPublishChange(false)">
-            <a *ngIf="authService.isAuthenticated()">
+            <a *ngIf="authService.isAuthenticated() && vid != 0">
               <app-badge-button faClass="far fa-eye-slash" textClass="is-danger" text="Unpublish" textTooltip="Click here to unpublish the script"></app-badge-button>
             </a>
           </div>
