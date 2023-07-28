@@ -28,11 +28,21 @@ class ScriptSerializer(serializers.ModelSerializer):
 
     def get_slides(self, instance):
         slides = []
-        row = ScriptDetail.objects.get(script=instance, prevRow=None)
-        slides.append(row)
-        while row.nextRow:
-            row = ScriptDetail.objects.get(pk=row.nextRow)
+        try:
+            count = 1
+            row = ScriptDetail.objects.get(script=instance, prevRow=None)
             slides.append(row)
+            while row.nextRow:
+                try:
+                    count += 1
+                    nextRow = row.nextRow
+                    row = ScriptDetail.objects.get(pk=nextRow)
+                    slides.append(row)
+                except ScriptDetail.DoesNotExist as e:
+                    print('Exception while reading row', count, nextRow, 'of', instance, ':', e)
+                    break
+        except ScriptDetail.DoesNotExist as e:
+            print('Exception while reading row', count, 'of', instance, ':', e)
 
         # slides = ScriptDetail.objects.filter(script=instance)
         # ordering = instance.ordering
