@@ -22,7 +22,7 @@ class Script(models.Model):
     editable = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.domain) + ' - ' + str(self.foss_id) + ' - ' + str(self.tutorial_id)
+        return 'Script ' + str(self.id) + ' - ' + str(self.domain) + ' - ' + str(self.foss_id) + ' - ' + str(self.tutorial_id)
 
 
 class ScriptDetail(models.Model):
@@ -33,6 +33,9 @@ class ScriptDetail(models.Model):
     nextRow = models.PositiveIntegerField(null=True)
     script = models.ForeignKey(Script, on_delete=models.CASCADE)
     comment_status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return 'ScriptDetail ' + str(self.id) + ' - ' + str(self.order) + ' - ' + str(self.prevRow) + ' - ' + str(self.nextRow)
 
 
 class Comment(models.Model):
