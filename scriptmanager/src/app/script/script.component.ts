@@ -26,7 +26,7 @@ export class ScriptComponent implements OnInit {
   public fid;
   public titleVisualCue: string;
 
-  constructor(public router: Router, public route: ActivatedRoute, public createscriptService: CreateScriptService) { }
+  constructor(public router: Router, public route: ActivatedRoute, public createScriptService: CreateScriptService) { }
 
   public getRelativeOrdering() {
     var relative_ordering = [];
@@ -56,39 +56,40 @@ export class ScriptComponent implements OnInit {
     const scriptId = this.slides[0]['script'];
     // const relativeOrdering = this.getRelativeOrdering().join(',');
     const slideid = this.slides[newSlideIndex].id
-    this.createscriptService.modifyOrdering(scriptId, move, slideid)
-      .subscribe(
-        (res) => {
-          new Noty({
-            type: 'success',
-            layout: 'topRight',
-            theme: 'metroui',
-            closeWith: ['click'],
-            text: 'The script is sucessfully updated!',
-            animation: {
-              open: 'animated fadeInRight',
-              close: 'animated fadeOutRight'
-            },
-            timeout: 4000,
-            killer: true
-          }).show();
-        },
-        (error) => {
-          new Noty({
-            type: 'error',
-            layout: 'topRight',
-            theme: 'metroui',
-            closeWith: ['click'],
-            text: 'Woops! There seems to be an error.',
-            animation: {
-              open: 'animated fadeInRight',
-              close: 'animated fadeOutRight'
-            },
-            timeout: 4000,
-            killer: true
-          }).show();
-        }
-      );
+    this.createScriptService.modifyOrdering(
+      scriptId, move, slideid
+    ).subscribe(
+      (res) => {
+        new Noty({
+          type: 'success',
+          layout: 'topRight',
+          theme: 'metroui',
+          closeWith: ['click'],
+          text: 'The script is sucessfully updated!',
+          animation: {
+            open: 'animated fadeInRight',
+            close: 'animated fadeOutRight'
+          },
+          timeout: 4000,
+          killer: true
+        }).show();
+      },
+      (error) => {
+        new Noty({
+          type: 'error',
+          layout: 'topRight',
+          theme: 'metroui',
+          closeWith: ['click'],
+          text: 'Woops! There seems to be an error.',
+          animation: {
+            open: 'animated fadeInRight',
+            close: 'animated fadeOutRight'
+          },
+          timeout: 4000,
+          killer: true
+        }).show();
+      }
+    );
 
   }
   
@@ -111,7 +112,7 @@ export class ScriptComponent implements OnInit {
   //remove slides after clicking on cross icon
   public onRemoveSlide(index) {
     if (this.slides[index]['id'] != '') {
-      this.createscriptService.deleteScript(
+      this.createScriptService.deleteScript(
         this.slides[index]['id']
       ).subscribe(
         (res) => {

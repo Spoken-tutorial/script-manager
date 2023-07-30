@@ -12,7 +12,6 @@
 {% block jsblock %}
 <script type="text/javascript">
   var token = "{{token}}";
-  console.log("loaded")
   localStorage.setItem('token', token);
 </script>
 <script type="text/javascript" src="{% static 'scriptmanager/runtime.js' %}""></script>

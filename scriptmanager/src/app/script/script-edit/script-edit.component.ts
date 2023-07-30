@@ -21,7 +21,7 @@ export class ScriptEditComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    public createscriptService: CreateScriptService,
+    public createScriptService: CreateScriptService,
     public router: Router
   ) { }
 
@@ -40,7 +40,7 @@ export class ScriptEditComponent implements OnInit {
   // what it does:takes the data and make an api call(POST request) so as to save that data to database
   // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason 
   public onSaveScript(script: any) {
-    this.createscriptService.patchScript(
+    this.createScriptService.patchScript(
       script
     ).subscribe(
       (res) => {
@@ -86,7 +86,7 @@ export class ScriptEditComponent implements OnInit {
     this.orderId = this.orderId + 1;
     // var relative_ordering = this.getRelativeOrdering().join(',');
 
-    this.createscriptService.postScript(
+    this.createScriptService.postScript(
       this.domain, this.fid, this.tid, this.lid, this.vid,
       {
         "details": [script],
@@ -138,7 +138,9 @@ export class ScriptEditComponent implements OnInit {
   // what it does:
   // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason 
   public getData() {
-    this.createscriptService.getScript(this.domain, this.fid, this.tid, this.lid, this.vid).subscribe(
+    this.createScriptService.getScript(
+      this.domain, this.fid, this.tid, this.lid, this.vid
+    ).subscribe(
       (res) => {
         this.slides = res['slides'];
         const published = res['status'];

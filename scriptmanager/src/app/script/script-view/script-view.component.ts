@@ -48,7 +48,7 @@ export class ScriptViewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    public createscriptService: CreateScriptService,
+    public createScriptService: CreateScriptService,
     public commentsService: CommentsService,
     public revisionsService: RevisionsService,
     public router: Router,
@@ -56,7 +56,7 @@ export class ScriptViewComponent implements OnInit {
   ) { }
 
   public viewScript() {
-    this.createscriptService.getScript(
+    this.createScriptService.getScript(
       this.domain, this.fid, this.tid, this.lid, this.vid
     ).subscribe(
       (res) => {
@@ -68,18 +68,19 @@ export class ScriptViewComponent implements OnInit {
   }
   
   public onPublishChange(status) {
-    this.createscriptService.changeScriptStatus(this.domain, this.fid, this.tid, this.lid, this.vid, status)
-      .subscribe(
-        (res) => {
-          if (res.hasOwnProperty('status')) {
-            this.script.status = res['status'];
-            this.script.message = res['message'];
-          } else {
-            this.script.message = 'Error: ' + res['message'];
-          }
-        },
-        console.error
-      );
+    this.createScriptService.changeScriptStatus(
+      this.domain, this.fid, this.tid, this.lid, this.vid, status
+    ).subscribe(
+      (res) => {
+        if (res.hasOwnProperty('status')) {
+          this.script.status = res['status'];
+          this.script.message = res['message'];
+        } else {
+          this.script.message = 'Error: ' + res['message'];
+        }
+      },
+      console.error
+    );
   }
 
   public saveSuggestedTitle(title) {
@@ -97,13 +98,14 @@ export class ScriptViewComponent implements OnInit {
     })
     .then((result) => {
       if (result.value) {
-        this.createscriptService.suggestTutorialTitle(this.domain, this.fid,this.tid, this.lid, this.vid, `${result.value}`)
-          .subscribe(
-            (res) => {
-              this.script.suggested_title = res['suggested_title'];
-            },
-            console.error
-          );
+        this.createScriptService.suggestTutorialTitle(
+          this.domain, this.fid,this.tid, this.lid, this.vid, `${result.value}`
+        ).subscribe(
+          (res) => {
+            this.script.suggested_title = res['suggested_title'];
+          },
+          console.error
+        );
       }
     })
   }
@@ -260,7 +262,7 @@ export class ScriptViewComponent implements OnInit {
 
   public onScriptVersionChange(vid){
     this.router.navigate(['/view/' + this.domain+"/"+this.fid+"/"+this.tid + '/' + this.lid + '/' + this.tutorialName + '/' + vid]);
-    this.createscriptService.getScript(
+    this.createScriptService.getScript(
       this.domain, this.fid, this.tid, this.lid, vid
     ).subscribe(
       (res) => {

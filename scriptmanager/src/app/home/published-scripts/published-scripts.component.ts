@@ -10,17 +10,16 @@ export class PublishedScriptsComponent implements OnInit {
   public scripts: any = [];
 
   constructor(
-    private scriptService: CreateScriptService
+    private createScriptService: CreateScriptService
   ) { }
 
   ngOnInit() {
-    this.scriptService.getPublishedScripts()
-      .subscribe(
-        (res) => {
-          this.scripts = res['data'];
-        },
-        console.error
-      )
+    this.createScriptService.getPublishedScripts().subscribe(
+      (res) => {
+        this.scripts = res['data'];
+      },
+      console.error
+    )
   }
 
 }
