@@ -11,14 +11,13 @@ export class ReviewScriptsComponent implements OnInit {
   public scripts: any = [];
 
   constructor(
-    private scriptService: CreateScriptService
+    private createScriptService: CreateScriptService
   ) { }
 
   ngOnInit() {
-    this.scriptService.getReviewScripts()
-      .subscribe(
-        (res) => this.scripts = res['data'],
-        console.error
-      )
+    this.createScriptService.getReviewScripts().subscribe(
+      (res) => this.scripts = res['data'],
+      console.error
+    )
   }
 }

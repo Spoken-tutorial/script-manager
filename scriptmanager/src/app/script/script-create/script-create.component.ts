@@ -20,7 +20,7 @@ export class ScriptCreateComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    public createscriptService: CreateScriptService,
+    public createScriptService: CreateScriptService,
     public router: Router
   ) { }
 
@@ -46,7 +46,7 @@ export class ScriptCreateComponent implements OnInit {
 
     // const relative_ordering = this.getRelativeOrdering().join(',');
 
-    this.createscriptService.postScript(
+    this.createScriptService.postScript(
       this.domain, this.fid, this.tid, this.lid, this.vid,
       {
         "details": script,

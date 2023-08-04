@@ -17,7 +17,7 @@ export class TutorialsComponent implements OnInit {
 
   constructor(
     public tutorialService: TutorialsService,
-    public createscriptService: CreateScriptService,
+    public createScriptService: CreateScriptService,
     public router: Router
   ) { }
 
@@ -27,7 +27,7 @@ export class TutorialsComponent implements OnInit {
 
   public reupload(domain, fid, tid, lid, tutorialName, vid, isDelete){
     if (isDelete) {
-      this.createscriptService.deleteScriptVersion(domain, fid, tid, lid, vid).subscribe(
+      this.createScriptService.deleteScriptVersion(domain, fid, tid, lid, vid).subscribe(
         (res) => {
           new Noty({
             type: 'success',
@@ -60,10 +60,6 @@ export class TutorialsComponent implements OnInit {
         }
       );
       this.router.navigate(['/upload/' +domain+'/'+fid+'/'+ tid + '/' + lid + '/' + tutorialName + '/' + vid]);
-    }
-    else {
-      const version = +vid + 1;
-      this.router.navigate(['/upload/' + domain+'/'+fid+'/'+ tid+ '/' + lid + '/' + tutorialName + '/' + version]);
     }
   }
 

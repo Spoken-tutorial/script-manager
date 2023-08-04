@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UploadFileService } from '../../_service/upload-file.service'
-import { CreateScriptService } from '../../_service/create-script.service'
+import { UploadFileService } from '../../_service/upload-file.service';
+import { CreateScriptService } from '../../_service/create-script.service';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FormGroup, FormControl } from '@angular/forms';
 // import * as Noty from 'noty';
@@ -51,7 +51,6 @@ export class ScriptUploadComponent implements OnInit {
     this.uploadfileService.postFile(this.domain, this.fid, this.tid, this.lid, this.vid, this.scriptFile)
       .subscribe(
         (res) => {
-          console.log('postFile success')
           this.router.navigateByUrl("/view/" +this.domain+"/"+this.fid+"/"+ this.tid + "/" + this.lid + "/" + this.tutorialName + "/" + this.vid);
           new Noty({
             type: 'success',
@@ -68,7 +67,7 @@ export class ScriptUploadComponent implements OnInit {
           }).show();
         },
         (error) => {
-          console.log('postFile error')
+          console.error('postFile error', error)
           new Noty({
             type: 'error',
             layout: 'topRight',
