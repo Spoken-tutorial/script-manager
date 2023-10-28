@@ -38,7 +38,7 @@ export class ScriptEditComponent implements OnInit {
 
   // argument:contains the data of the cue and narration which is entered by the user while creating the script
   // what it does:takes the data and make an api call(POST request) so as to save that data to database
-  // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason 
+  // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason
   public onSaveScript(script: any) {
     this.createScriptService.patchScript(
       script
@@ -134,9 +134,9 @@ export class ScriptEditComponent implements OnInit {
     this.onInsertSlide(index);
   }
 
-  // argument:tutorial id and 
+  // argument:tutorial id and
   // what it does:
-  // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason 
+  // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason
   public getData() {
     this.createScriptService.getScript(
       this.domain, this.fid, this.tid, this.lid, this.vid
@@ -148,7 +148,7 @@ export class ScriptEditComponent implements OnInit {
         if (published) {
           this.router.navigate(['']);
         }
-        
+
         if (!res['editable']) {
           this.router.navigate(['']);
         }

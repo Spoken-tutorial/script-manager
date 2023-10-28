@@ -14,12 +14,12 @@
         <p *ngIf="script.message">
           <ng-container *ngIf="!script.message.startsWith('Error: ')">
             <div class="status-message">
-                {{ script.message }}
+              {{ script.message }}
             </div>
           </ng-container>
           <ng-container *ngIf="script.message.startsWith('Error: ')">
             <div class="status-error-message">
-                {{ script.message }}
+              {{ script.message }}
             </div>
           </ng-container>
         </p>
@@ -179,7 +179,7 @@
     <div class="columns" >
       <div class="column buttons">
         <div class="field is-grouped">
-          <div  class="control" *ngIf="!script?.status && script.editable" [swal]="{ title: 'Publish Tutorial',
+          <div class="control" *ngIf="!script?.status && script.editable" [swal]="{ title: 'Publish Tutorial',
                 text: 'The tutorial is being approved by you and will be visible to everyone. Contributors and Reviewers will no longer be able to edit it. Are you sure?',
                 type: 'warning',
                 showCancelButton: 'true',
@@ -188,11 +188,11 @@
                 cancelButtonText: 'No!'
               }" (confirm)="onPublishChange(true)">
             <a>
-              <app-badge-button faClass="far fa-eye" textClass="is-success" text="Publish"  textTooltip="Click here to publish the script"></app-badge-button>
+              <app-badge-button faClass="far fa-eye" textClass="is-success" text="Publish" textTooltip="Click here to publish the script"></app-badge-button>
             </a>
           </div>
 
-          <div  class="control" *ngIf="script?.status" [swal]="{ title: 'Unpublish Tutorial',
+          <div class="control" *ngIf="script?.status" [swal]="{ title: 'Unpublish Tutorial',
                 text: 'You are about to unpublish this tutorial. By doing this only the contributors and reviewers of the FOSS will be able to view and edit it. Are you sure?',
                 type: 'warning',
                 showCancelButton: 'true',

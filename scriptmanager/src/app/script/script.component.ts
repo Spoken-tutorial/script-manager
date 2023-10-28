@@ -52,7 +52,7 @@ export class ScriptComponent implements OnInit {
     this.slides[newSlideIndex] = temp;
 
     if (this.nav == "create") return;
-    
+
     const scriptId = this.slides[0]['script'];
     // const relativeOrdering = this.getRelativeOrdering().join(',');
     const slideid = this.slides[newSlideIndex].id
@@ -92,7 +92,7 @@ export class ScriptComponent implements OnInit {
     );
 
   }
-  
+
   public getEmptySlide() {
     return {
       id: '-1',
@@ -108,7 +108,7 @@ export class ScriptComponent implements OnInit {
     const index = this.slides.length - 1;
     this.insertSlideEmitter.emit(index);
   }
-  
+
   //remove slides after clicking on cross icon
   public onRemoveSlide(index) {
     if (this.slides[index]['id'] != '') {

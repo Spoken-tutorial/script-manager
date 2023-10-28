@@ -7,7 +7,7 @@ import { CookieService } from 'ngx-cookie';
   providedIn: 'root'
 })
 export class CommentsService {
-  public env =  environment;
+  public env = environment;
   public apiUrl = this.env['apiUrlScript']
   private httpOptions: any;
 

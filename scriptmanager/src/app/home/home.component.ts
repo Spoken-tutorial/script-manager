@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   public currentLanguage = -1;
   public tutorials;
   public description: string = '';
-  
+
   constructor(
     public fossService: FossService,
     public tutorialService: TutorialsService,
@@ -107,8 +107,8 @@ export class HomeComponent implements OnInit {
         }
       );
 
-      
-      
+
+
     }
   };
 

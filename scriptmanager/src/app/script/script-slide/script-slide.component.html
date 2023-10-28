@@ -25,8 +25,8 @@
               <p class="heading">{{ titleVisualCue }}</p>
               <div class="field">
                 <div class="control content">
-                  <quill-editor id="editor" [modules]="modules" tagName="textarea" formControlName="cue" [(ngModel)]="slide.cue" (onBlur)="saveSlide(true)" 
-                    [styles]="quillStyles" theme="snow"  (ngModelChange)="onChange($event)">
+                  <quill-editor id="editor" [modules]="modules" tagName="textarea" formControlName="cue" [(ngModel)]="slide.cue" (onBlur)="saveSlide(true)"
+                    [styles]="quillStyles" theme="snow" (ngModelChange)="onChange($event)">
                   </quill-editor>
                   <p>Character Count : {{ visual_cue_char }}</p>
                   <p>Word Count : {{ visual_cue }} </p>

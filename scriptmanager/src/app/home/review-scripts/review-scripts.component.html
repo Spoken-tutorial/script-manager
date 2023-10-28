@@ -3,8 +3,8 @@
     <ng-container *ngIf="scripts.length !== 0">
       <div *ngFor="let script of scripts">
         <blockquote>
-            <span class="tag is-primary is-medium">Foss</span>
-            {{script.foss}}
+          <span class="tag is-primary is-medium">Foss</span>
+          {{script.foss}}
         </blockquote>
         <div class="columns">
           <div class="column is-8">
@@ -13,8 +13,8 @@
             </div>
             <div class="desc">
               <p><b>Outline: {{ script.outline }}</b></p>
-                <p><b>Published by: </b>{{ script.published_by }}</p>
-                <p><b>Published on: </b>{{ script.published_on }}</p>
+              <p><b>Published by: </b>{{ script.published_by }}</p>
+              <p><b>Published on: </b>{{ script.published_on }}</p>
               <p><b>Created by: </b>{{ script.created_by }}</p>
             </div>
           </div>
@@ -30,11 +30,11 @@
                   <app-badge-button faClass="fa fa-eye" textClass="is-info" text="View" textTooltip="Click here to view the script"></app-badge-button>
                 </a>
               </div>
-          </div>  
-      </div>
-      </div>
-        
-        <div class="is-divider" data-content="-"></div>        
+            </div>
+          </div>
+        </div>
+
+        <div class="is-divider" data-content="-"></div>
       </div>
     </ng-container>
 

@@ -34,7 +34,7 @@ export class ScriptCommentComponent implements OnInit {
 
   saveComment(index) {
     this.commentService.modifyComment(
-      this.comments[index]['id'], 
+      this.comments[index]['id'],
       {'comment': this.comments[index].comment}
     ).subscribe(
         (res) => {

@@ -57,7 +57,7 @@ def get_healthnutrition_tutorials_details(fid, lid, tid):
         'foss': healthnuritions['tutorial'][0]['foss'],
         'language': healthnuritions['tutorial'][0]['language'],
         'tutorial': {'tutorial': healthnuritions['tutorial'][0]['tutorial'], 'outline': healthnuritions['tutorial'][0]['outline']}
-        }
+    }
 
     return data
 

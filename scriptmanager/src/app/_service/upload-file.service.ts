@@ -20,8 +20,8 @@ export class UploadFileService {
       csrf = '';
     }
     this.httpOptions = {
-      headers: new HttpHeaders({  
-        'X-CSRFToken': csrf 
+      headers: new HttpHeaders({
+        'X-CSRFToken': csrf
       })
     };
   }

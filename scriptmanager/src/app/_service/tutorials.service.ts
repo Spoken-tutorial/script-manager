@@ -7,15 +7,15 @@ import { environment} from '../../environments/environment'
 })
 
 export class TutorialsService {
-  public env =  environment;
+  public env = environment;
   public apiUrl = this.env['apiUrlScript']
-  
+
   // API service for fetching a list of all tutorials for the selected foss Id and language ID
   public getFossTutorials(domain, fossId, languageId){
     const _url = `${this.apiUrl}/foss/${fossId}/language/${languageId}/tutorials/${domain}/`
     return this.httpClient.get(_url);
   }
 
-  constructor(private httpClient: HttpClient) {} 
+  constructor(private httpClient: HttpClient) {}
 
 }
