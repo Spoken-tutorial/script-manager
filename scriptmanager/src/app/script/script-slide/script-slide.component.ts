@@ -38,8 +38,6 @@ export class ScriptSlideComponent implements OnInit {
 
   editorForm: FormGroup;
 
-  
-
   onChange(event: any): void {
   if(event == ''){
     this.visual_cue = 0;
@@ -50,7 +48,7 @@ export class ScriptSlideComponent implements OnInit {
     this.visual_cue_char = 0;
   }else{
   var s = event;
-  var regex  = /(<([^>]+)>)/ig;
+  var regex = /(<([^>]+)>)/ig;
   var sn = s.replace(regex, " ");
   var s_char = s.replace(regex, "");
   this.visual_cue_char = s_char.length;
@@ -74,7 +72,7 @@ export class ScriptSlideComponent implements OnInit {
     this.narration_char = 0;
   }else{
   var s = event;
-  var regex  = /(<([^>]+)>)/ig;
+  var regex = /(<([^>]+)>)/ig;
   var sn = s.replace(regex, " ");
   var s_char = s.replace(regex, "");
   this.narration_char = s_char.length;
@@ -85,8 +83,6 @@ export class ScriptSlideComponent implements OnInit {
   this.narration = len;
   }
   }
-
-  
 
   // public Editor = ClassicEditor;
   // public ckeditorConfig = {
@@ -130,12 +126,12 @@ export class ScriptSlideComponent implements OnInit {
   public removeSlide() {
     this.removeSlideEmitter.emit(this.index);
   }
-  
+
   public insertSlide() {
     this.insertSlideEmitter.emit(this.index + 1);
 
   }
-  
+
   public checkSlide() {
     this.oldSlide.cue = this.slide.cue;
     this.oldSlide.narration = this.slide.narration;
@@ -166,8 +162,7 @@ export class ScriptSlideComponent implements OnInit {
   public changeNarrationToEditor() {
     this.ckEditorNarration = true;
   }
-  
-  
+
   ngOnInit() {
     this.editorForm = new FormGroup({
       'cue': new FormControl(),
@@ -178,4 +173,3 @@ export class ScriptSlideComponent implements OnInit {
   }
 
 }
-

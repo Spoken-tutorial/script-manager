@@ -7,7 +7,7 @@
         {{ comment['comment'] }}
       </p>
       <small>
-        <i class="fa fa-user"></i> {{ comment['user'] }} | <em>{{comment['time']}}</em> 
+        <i class="fa fa-user"></i> {{ comment['user'] }} | <em>{{comment['time']}}</em>
         <span class="tag is-white" *ngIf="comment.resolved && !authService.isOwner(comment.user)">
           <span style="font-weight: bold;"> | Resolved</span>
         </span>
@@ -29,28 +29,28 @@
         <div class="column is-narrow" *ngIf="!comment.resolved && !published">
           <a (click)="doneComment()">
             <span class="tag is-warning is-light" *ngIf="!comment.done" title="Click to notify that the changes are incorporated">
-              <span>Done</span> 
+              <span>Done</span>
             </span>
-            <span class="tag is-warning" *ngIf="comment.done"  title="Click to notify that the changes are not incorporated">
+            <span class="tag is-warning" *ngIf="comment.done" title="Click to notify that the changes are not incorporated">
                 <span class="icon">
                   <i class="fas fa-check"></i>
                 </span>
-                <span>Done</span> 
+                <span>Done</span>
               </span>
             </a>
         </div>
         <div class="column is-narrow" *ngIf="authService.isOwner(comment.user) && !published">
           <a (click)="resolveComment()">
-            <span class="tag is-success is-light" *ngIf="!comment.resolved"  title="Click to notify that the changes are verified">
+            <span class="tag is-success is-light" *ngIf="!comment.resolved" title="Click to notify that the changes are verified">
               <span>Resolve</span>
             </span>
-            <span class="tag is-success" *ngIf="comment.resolved"  title="Click to notify that the issue raised is still pending">
-                <span class="icon">
-                  <i class="fas fa-check"></i>
-                </span>
-                <span>Resolved</span>
+            <span class="tag is-success" *ngIf="comment.resolved" title="Click to notify that the issue raised is still pending">
+              <span class="icon">
+                <i class="fas fa-check"></i>
               </span>
-            </a>
+              <span>Resolved</span>
+            </span>
+          </a>
         </div>
       </div>
       <span class="is-divider" style="margin:10px 0 20px 0;"></span>

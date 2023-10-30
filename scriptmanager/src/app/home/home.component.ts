@@ -18,13 +18,12 @@ export class HomeComponent implements OnInit {
   public currentLanguage = -1;
   public tutorials;
   public description: string = '';
-  
+
   constructor(
     public fossService: FossService,
     public tutorialService: TutorialsService,
     public authService: AuthService
   ) { }
-
 
   public onDomainCategoryChange(name){
     this.currentDomainCategory = name;
@@ -107,8 +106,6 @@ export class HomeComponent implements OnInit {
         }
       );
 
-      
-      
     }
   };
 

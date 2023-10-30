@@ -29,12 +29,11 @@ export class ScriptCommentComponent implements OnInit {
     }
   }
 
-
   commentKey(event) { this.newComment = event.target.value; }
 
   saveComment(index) {
     this.commentService.modifyComment(
-      this.comments[index]['id'], 
+      this.comments[index]['id'],
       {'comment': this.comments[index].comment}
     ).subscribe(
         (res) => {

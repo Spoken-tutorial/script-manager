@@ -10,7 +10,7 @@ import { environment} from '../../../environments/environment';
   styleUrls: ['./tutorials.component.sass']
 })
 export class TutorialsComponent implements OnInit {
-  public env =  environment;
+  public env = environment;
   public scriptVersionsAllowed = this.env['scriptVersionsAllowed'];
 
   @Input() tutorial: any;

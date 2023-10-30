@@ -32,7 +32,7 @@ import { ReviewScriptsComponent } from './home/review-scripts/review-scripts.com
 import { ScriptCommentBoxComponent } from './script/script-comment/script-comment-box/script-comment-box.component';
 import { AlertService } from './services/alert.service';
 
-// since we are saving the JWT token for authentication in the local storage 
+// since we are saving the JWT token for authentication in the local storage
 // , here we get that token to send it with each api call to authenticate with the server
 export function tokenGetter() {
   const token = localStorage.getItem('token');
