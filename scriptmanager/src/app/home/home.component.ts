@@ -25,7 +25,6 @@ export class HomeComponent implements OnInit {
     public authService: AuthService
   ) { }
 
-
   public onDomainCategoryChange(name){
     this.currentDomainCategory = name;
     localStorage.setItem("domain",name);
@@ -106,8 +105,6 @@ export class HomeComponent implements OnInit {
           console.error('Failed to fetch foss categories', err);
         }
       );
-
-
 
     }
   };

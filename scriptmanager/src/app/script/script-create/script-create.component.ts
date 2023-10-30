@@ -35,7 +35,6 @@ export class ScriptCreateComponent implements OnInit {
     return relative_ordering;
   }
 
-
   // argument:contains the data of the cue and narration which is entered by the user while creating the script
   // what it does:takes the data and make an api call(POST request) so as to save that data to database
   // returns: status==success if data is saved successfully and status=false if data couldn't saved successfully because of some reason
@@ -87,7 +86,6 @@ export class ScriptCreateComponent implements OnInit {
         }).show();
       }
     );
-
 
   }
 

@@ -6,7 +6,6 @@ import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FormGroup, FormControl } from '@angular/forms';
 // import * as Noty from 'noty';
 
-
 @Component({
   selector: 'app-script-upload',
   templateUrl: './script-upload.component.html',

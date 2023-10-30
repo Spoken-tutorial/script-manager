@@ -29,7 +29,6 @@ export class ScriptCommentComponent implements OnInit {
     }
   }
 
-
   commentKey(event) { this.newComment = event.target.value; }
 
   saveComment(index) {

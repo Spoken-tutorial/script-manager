@@ -38,8 +38,6 @@ export class ScriptSlideComponent implements OnInit {
 
   editorForm: FormGroup;
 
-
-
   onChange(event: any): void {
   if(event == ''){
     this.visual_cue = 0;
@@ -85,8 +83,6 @@ export class ScriptSlideComponent implements OnInit {
   this.narration = len;
   }
   }
-
-
 
   // public Editor = ClassicEditor;
   // public ckeditorConfig = {
@@ -167,7 +163,6 @@ export class ScriptSlideComponent implements OnInit {
     this.ckEditorNarration = true;
   }
 
-
   ngOnInit() {
     this.editorForm = new FormGroup({
       'cue': new FormControl(),
@@ -178,4 +173,3 @@ export class ScriptSlideComponent implements OnInit {
   }
 
 }
-

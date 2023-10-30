@@ -21,7 +21,6 @@ sudo apt-get install libreoffice
 python manage.py migrate
 ```
 
-
 ## Changes needed to the build
 * This is applicable on Test/Production server that does not have Angular
 * Edit /static/scriptmanager/main.js

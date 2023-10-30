@@ -6,8 +6,6 @@ import { environment } from '../../environments/environment'
   providedIn: 'root'
 })
 
-
-
 export class FossService {
   public env = environment;
   public apiUrl = this.env['apiUrlScript'];
@@ -18,6 +16,5 @@ export class FossService {
   }
 
   constructor(private httpClient: HttpClient) { }
-
 
 }

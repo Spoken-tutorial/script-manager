@@ -210,7 +210,6 @@ export class ScriptViewComponent implements OnInit {
     this.el2.nativeElement.classList.remove('is-active')
   }
 
-
   public getRevison(i) {
     this.revisionsService.getRevisions(
       i
