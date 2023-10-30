@@ -56,6 +56,11 @@
               <app-badge-button faClass="fa fa-edit" textClass="is-success" text="Create" textTooltip="Click here to create this script"></app-badge-button>
             </a>
           </div>
+          <div class="control" *ngIf="!script.id">
+            <a routerLink="/upload/{{domain}}/{{fid}}/{{tid}}/{{lid}}/{{ tutorialName }}/{{vid}}">
+              <app-badge-button faClass="fa fa-edit" textClass="is-success" text="Upload" textTooltip="Click here to upload this script"></app-badge-button>
+            </a>
+          </div>
         </div>
         <!-- <div *ngIf="authService.isAuthenticated()">
           <div class="select" title="Click here to choose the version number for viewing the script">
@@ -123,7 +128,17 @@
         </div>
 
         <div #viewScript class="table-container">
-          <table border="1px" #tableRow class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" id="script-table">
+          <p *ngIf="!script.id">
+            <ng-container>
+              <div class="notification" *ngIf="authService.isAuthenticated()">
+                Click on Create or Upload to create a new script.
+              </div>
+              <div class="notification" *ngIf="!authService.isAuthenticated()">
+                Script not found.
+              </div>
+            </ng-container>
+          </p>
+          <table border="1px" #tableRow class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" id="script-table" *ngIf="script.id">
             <thead>
               <tr>
                 <th>Sr. No.</th>

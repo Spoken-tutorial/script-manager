@@ -143,7 +143,10 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
             return None
 
     def get(self, request, fid, tid, lid, vid, domain):
-        script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
+        scripts = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
+        if not scripts.exists():
+            return Response({}, status=200)
+        script = scripts.first()
         serialized = ScriptSerializer(script)
         return Response(serialized.data, status=200)
 
