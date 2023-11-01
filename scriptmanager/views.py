@@ -4,9 +4,10 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 from django.utils import timezone
 import os
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+
 from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.utils import jwt_payload_handler as default_jwt_payload_handler
@@ -467,3 +468,9 @@ class ReversionRevertView(generics.CreateAPIView):
             return Response({'status': True}, status=201)
         except Exception:
             return Response({'status': False, 'message': 'Failed'}, status=403)
+
+
+class VersionView(APIView):
+    def get(self, request, domain, fid, tid, lid):
+        published_versions = Script.objects.filter(domain=domain, foss_id=fid, tutorial_id=tid, language_id=lid, status=1).values_list('versionNo', flat=True)
+        return Response({'published': published_versions}, status=status.HTTP_200_OK)
