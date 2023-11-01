@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'api/comments/(?P<comment_id>[0-9]+)/$', views.CommentAPI.as_view()),
     # url(r'api/docs/$', schema_view),
     url(r'api/token-auth/', obtain_jwt_token, name='jwt_token'),
+    url(r'api/versions/(?P<domain>[\w\-]+)/(?P<fid>[0-9]+)/(?P<tid>[0-9]+)/(?P<lid>[0-9]+)', views.VersionView.as_view(), name='versions'),
 ]
 
 app_name = 'scriptmanager'
