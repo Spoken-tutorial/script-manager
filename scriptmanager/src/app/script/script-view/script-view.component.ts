@@ -73,8 +73,14 @@ export class ScriptViewComponent implements OnInit {
     ).subscribe(
       (res) => {
         if (res.hasOwnProperty('status')) {
-          this.script.status = res['status'];
-          this.script.message = res['message'];
+          var newVid = res['newVid'];
+          status = res['status'];
+          var message = res['message'];
+          this.script.status = status;
+          this.script.message = message;
+          if (newVid !== '' && newVid != this.vid) {
+            this.onScriptVersionChange(newVid, status, message);
+          }
         } else {
           this.script.message = 'Error: ' + res['message'];
         }
@@ -259,7 +265,7 @@ export class ScriptViewComponent implements OnInit {
     window.location.reload();
   }
 
-  public onScriptVersionChange(vid){
+  public onScriptVersionChange(vid, status='', message=''){
     this.router.navigate(['/view/' + this.domain+"/"+this.fid+"/"+this.tid + '/' + this.lid + '/' + this.tutorialName + '/' + vid]);
     this.createScriptService.getScript(
       this.domain, this.fid, this.tid, this.lid, vid
@@ -267,6 +273,11 @@ export class ScriptViewComponent implements OnInit {
       (res) => {
         this.slides = res['slides'];
         this.script = res;
+        this.vid = vid;
+        if (status !== '') {
+          this.script.status = status;
+          this.script.message = message;
+        }
       },
       console.error
     );

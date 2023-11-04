@@ -170,10 +170,6 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
                 user=self.request.user,
                 versionNo=int(vid),
                 editable=True)
-            if int(vid) > 1:
-                prevScript = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid) - 1)  # Get previous version
-                prevScript.editable = False
-                prevScript.save()
         else:
             script = scripts.first()
 
@@ -242,7 +238,11 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     def patch(self, request, fid, tid, lid, vid, domain):
         try:
-            script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
+            fid = int(fid)
+            tid = int(tid)
+            lid = int(lid)
+            vid = int(vid)
+            script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
 
             if 'suggested_title' in request.data:
                 suggested_title = request.data['suggested_title']
@@ -254,16 +254,31 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
                 if not is_DomainReviewer(domain, fid, lid, request.user.username) and not is_QualityReviewer(domain, fid, lid, request.user.username):
                     return Response({'message': 'You do not have review permission.'}, status=200)
                 status = request.data['status']
-                script.status = status
 
-                script.published_by = request.user
-                script.published_on = timezone.now()
-                if not status:
-                    script.published_by = None
-                    script.published_on = None
+                newVid = vid
+                if vid == 2 and status:
+                    newVid = vid - 1
+                    # Delete previous script
+                    prevScripts = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid - 1)
+                    if prevScripts.exists():
+                        prevScript = prevScripts.first()
+                        print('deleting previous script', prevScript)
+                        prevScript.delete()
+                    vid = vid - 1
+                elif vid == 1 and not status:
+                    newVid = vid + 1
+                    # Check if next script exists
+                    nextScripts = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid + 1)
+                    if not nextScripts.exists():
+                        vid = vid + 1
+                script.versionNo = vid
+                script.status = status
+                script.published_by = request.user if status else None
+                script.published_on = timezone.now() if status else None
                 script.save()
-                return Response({'status': status, 'message': 'Successfully changed status of script'}, status=200)
-        except Exception:
+                return Response({'status': status, 'message': 'Successfully changed status of script', 'newVid': newVid}, status=200)
+        except Exception as e:
+            print(f"Failed to change status: {domain} {fid} {tid} {lid} {vid} {e!s}")
             return Response({'message': 'Failed to change status'}, status=200)
 
 
