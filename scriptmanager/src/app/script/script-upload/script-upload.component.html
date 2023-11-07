@@ -42,7 +42,7 @@
           <br />
 
           <div class="file is-centered">
-            <a *ngIf="uploadButton" class="button is-primary" (click)="onFileSave()" title="Click to upload the file"><i class="fa fa-upload"></i>&nbsp;
+            <a *ngIf="uploadButton && vid == 2" class="button is-primary" (click)="onFileSave()" title="Click to upload the file"><i class="fa fa-upload"></i>&nbsp;
               Upload Script</a>
           </div>
 
@@ -65,7 +65,7 @@
 
           </form>
 
-          <a class="button heading is-primary" [swal]="{ title: 'Upload Table',
+          <a *ngIf="vid == 2" class="button heading is-primary" [swal]="{ title: 'Upload Table',
                     text: 'Are you sure?',
                     type: 'info',
                     showCancelButton: 'true',

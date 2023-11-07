@@ -16,7 +16,7 @@ export class ScriptUploadComponent implements OnInit {
   private fid: number;
   private tid: number;
   private lid: number;
-  private vid: number;
+  public vid: number;
   public tutorialName: any;
   public scriptFile: any;
   public scriptFileName: any;
