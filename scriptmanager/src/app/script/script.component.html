@@ -18,7 +18,7 @@
     </div>
   </div>
 </div>
-<div *ngIf="nav!='create'" class="columns">
+<div *ngIf="nav!='create' && vid == 2" class="columns">
   <div class="column">
     <div class="field" title="Toggle button to autosave the script. When On, there is no need to click Save button.">
       <input id="autosave" type="checkbox" name="autosave"
@@ -50,7 +50,7 @@
             <div class="column">
               <a class="button heading is-outlined" (click)="addSlide()">Add new row</a>
             </div>
-            <div *ngIf="displaySave" class="column">
+            <div *ngIf="displaySave && vid == 2" class="column">
               <a class="button heading is-outlined is-primary" [swal]="{
                             title: 'Save Script',
                             text: 'Are you sure?',

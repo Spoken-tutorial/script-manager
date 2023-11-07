@@ -19,7 +19,7 @@ export class ScriptViewComponent implements OnInit {
   public tutorials: any = [];
   private tid: number;
   private lid: number;
-  private vid: number;
+  public vid: number;
   private domain: string;
   private fid: number;
   public titleVisualCue: string;

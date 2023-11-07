@@ -82,7 +82,6 @@ def get_tutorial_details(domain, fid, lid, tid):
     if domain == "spokentutorials":
         tdetails = get_spokentutorials_tutorials_details(fid, lid, tid)
     elif domain == "healthnutrition":
-        print("2.2 domain is healthnutrition")
         tdetails = get_healthnutrition_tutorials_details(fid, lid, tid)
     return tdetails
 
@@ -94,9 +93,10 @@ def get_spoken_roles(fid, lid, username):
     try:
         spoken_roles = requests.get(url)
         spoken_roles = spoken_roles.json()['spokentutorials']
+        print(f" TEST *********  15 spoken_roles : {url} {spoken_roles}")
         return spoken_roles['roles']
     except Exception as e:
-        print(" EXCEPTION ****  15 spoken_roles : {} {}".format(url, str(e)))
+        print(f" EXCEPTION ****  15 spoken_roles : {url} {e!s}")
         return None
 
 
@@ -105,10 +105,10 @@ def get_health_roles(fid, lid, username):
     try:
         health_roles = requests.get(url)
         health_roles = health_roles.json()['healthnutrition']
-        print(" TEST *********  15 health_roles : {}".format(health_roles))
+        print(f" TEST *********  15 health_roles : {url} {health_roles}")
         return health_roles['roles']
     except Exception as e:
-        print(" EXCEPTION ****  15 health_roles : {} {}".format(url, str(e)))
+        print(f" EXCEPTION ****  15 health_roles : {url} {e!s}")
         return None
 
 

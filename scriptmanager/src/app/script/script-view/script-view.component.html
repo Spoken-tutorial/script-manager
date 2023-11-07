@@ -41,22 +41,22 @@
               <app-badge-button faClass="fa fa-chevron-left" textClass="is-info" text="Go Back" textTooltip="Click here to go back to the list of tutorials in this FOSS"></app-badge-button>
             </a>
           </div>
-          <div class="control" *ngIf="nav!='create' && !script.status && script.editable">
+          <div class="control" *ngIf="nav!='create' && !script.status && script.editable && vid == 2">
             <a routerLink="/upload/{{domain}}/{{fid}}/{{tid}}/{{lid}}/{{ tutorialName }}/{{vid}}">
               <app-badge-button faClass="fa fa-upload" textClass="is-primary" text="Upload" textTooltip="Click here to upload the script"></app-badge-button>
             </a>
           </div>
-          <div class="control" *ngIf="nav!='create' && !script.status && script.editable">
+          <div class="control" *ngIf="nav!='create' && !script.status && script.editable && vid == 2">
             <a routerLink="/edit/{{domain}}/{{fid}}/{{tid}}/{{lid}}/{{ tutorialName }}/{{vid}}">
               <app-badge-button faClass="fa fa-edit" textClass="is-success" text="Edit" textTooltip="Click here to edit this script"></app-badge-button>
             </a>
           </div>
-          <div class="control" *ngIf="!script.id">
+          <div class="control" *ngIf="!script.id && vid == 2">
             <a routerLink="/create/{{domain}}/{{fid}}/{{tid}}/{{lid}}/{{ tutorialName }}/{{vid}}">
               <app-badge-button faClass="fa fa-edit" textClass="is-success" text="Create" textTooltip="Click here to create this script"></app-badge-button>
             </a>
           </div>
-          <div class="control" *ngIf="!script.id">
+          <div class="control" *ngIf="!script.id && vid == 2">
             <a routerLink="/upload/{{domain}}/{{fid}}/{{tid}}/{{lid}}/{{ tutorialName }}/{{vid}}">
               <app-badge-button faClass="fa fa-edit" textClass="is-success" text="Upload" textTooltip="Click here to upload this script"></app-badge-button>
             </a>
@@ -130,10 +130,10 @@
         <div #viewScript class="table-container">
           <p *ngIf="!script.id">
             <ng-container>
-              <div class="notification" *ngIf="authService.isAuthenticated()">
+              <div class="notification" *ngIf="authService.isAuthenticated() && vid == 2">
                 Click on Create or Upload to create a new script.
               </div>
-              <div class="notification" *ngIf="!authService.isAuthenticated()">
+              <div class="notification" *ngIf="!authService.isAuthenticated() || vid != 2">
                 Script not found.
               </div>
             </ng-container>
