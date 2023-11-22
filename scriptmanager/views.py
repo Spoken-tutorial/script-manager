@@ -15,8 +15,11 @@ from reversion.models import Version
 import subprocess
 import uuid
 from .models import Script, ScriptDetail, Comment
-from .permissions import is_DomainReviewer, is_QualityReviewer, ScriptOwnerPermission, ScriptModifyPermission, ReviewScriptPermission, CommentOwnerPermission, CanCommentPermission, CanRevisePermission
-from .serializers import ScriptDetailSerializer, ScriptSerializer, CommentSerializer, ReversionSerializer, ScriptListSerializer
+from .permissions import is_DomainReviewer, is_QualityReviewer, ScriptOwnerPermission, \
+        ScriptModifyPermission, ReviewScriptPermission, CommentOwnerPermission, \
+        CanCommentPermission, CanRevisePermission
+from .serializers import ScriptDetailSerializer, ScriptSerializer, CommentSerializer, \
+        ReversionSerializer, ScriptListSerializer
 from .utils import get_all_foss_languages, get_all_tutorials, get_tutorial_details
 
 
@@ -44,7 +47,10 @@ class FossLanguageList(generics.ListAPIView):
 
 class TutorialDetailList(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
-        tutorials = get_all_tutorials(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'])
+        domain = self.kwargs['domain']
+        fid = self.kwargs['fid']
+        lid = self.kwargs['lid']
+        tutorials = get_all_tutorials(domain, fid, lid)
         if tutorials:
             for k, v in enumerate(tutorials['tutorials']):
                 script_exist, script = self.get_script_exist(v['id'])
@@ -57,15 +63,18 @@ class TutorialDetailList(generics.ListAPIView):
                     v['created_by'] = script.user.username if script.user else None
                 v['suggested_title'] = script.suggested_title if script_exist else None
                 v['versionNo'] = script.versionNo if script_exist else None
-                v['domain'] = self.kwargs['domain']
-                v['fid'] = self.kwargs['fid']
-                v['lid'] = self.kwargs['lid']
+                v['domain'] = domain
+                v['fid'] = fid
+                v['lid'] = lid
                 tutorials['tutorials'][k] = v
         return Response({'data': tutorials}, status=200)
 
     def get_script_exist(self, tid):
         script = None
-        scripts = Script.objects.filter(domain=self.kwargs['domain'], foss_id=int(self.kwargs['fid']), tutorial_id=int(tid), language_id=int(self.kwargs['lid']))
+        domain = self.kwargs['domain']
+        fid = self.kwargs['fid']
+        lid = self.kwargs['lid']
+        scripts = Script.objects.filter(domain=domain, foss_id=int(fid), tutorial_id=int(tid), language_id=int(lid))
         if scripts.exists():
             script = scripts.order_by('-versionNo').first()
             return True, script
@@ -128,9 +137,17 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         try:
-            script = Script.objects.get(domain=self.kwargs['domain'], foss_id=self.kwargs['fid'], language_id=self.kwargs['lid'], tutorial_id=self.kwargs['tid'], versionNo=self.kwargs['vid'])
+            domain = self.kwargs['domain']
+            fid = self.kwargs['fid']
+            lid = self.kwargs['lid']
+            tid = self.kwargs['tid']
+            vid = self.kwargs['vid']
+            script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
             user = self.request.user
-            if is_DomainReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'], user.username) or is_QualityReviewer(self.kwargs['domain'], self.kwargs['fid'], self.kwargs['lid'], user.username) or script.user == user or script.status:
+            if script.status \
+                    or script.user == user \
+                    or is_DomainReviewer(domain, fid, lid, user.username) \
+                    or is_QualityReviewer(domain, fid, lid, user.username):
                 script_details = ScriptDetail.objects.filter(script=script)
                 ordering = script.ordering
 

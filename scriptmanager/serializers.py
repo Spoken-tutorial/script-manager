@@ -6,7 +6,8 @@ from .models import Script, ScriptDetail, Comment
 class ScriptDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScriptDetail
-        fields = ('id', 'cue', 'narration', 'order', 'comment_status', 'script')
+        fields = ('id', 'cue', 'narration', 'order', 'comment_status',
+                  'script')
 
 
 class ScriptSerializer(serializers.ModelSerializer):
@@ -24,7 +25,8 @@ class ScriptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Script
-        fields = ('id', 'slides', 'status', 'tutorial', 'language', 'suggested_title', 'versionNo', 'versions', 'editable')
+        fields = ('id', 'slides', 'status', 'tutorial', 'language',
+                  'suggested_title', 'versionNo', 'versions', 'editable')
 
     def get_slides(self, instance):
         slides = []
@@ -67,7 +69,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('id', 'comment', 'user', 'script_details', 'time', 'done', 'resolved')
+        fields = ('id', 'comment', 'user', 'script_details', 'time',
+                  'done', 'resolved')
 
     def get_time(self, instance):
         time = datetime.now()
@@ -103,4 +106,6 @@ class ScriptListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Script
-        fields = ('tid', 'fid', 'lid', 'domain', 'foss', 'language', 'tutorial', 'outline', 'status', 'user', 'published_by', 'published_on', 'suggested_title', 'versionNo', 'editable')
+        fields = ('tid', 'fid', 'lid', 'domain', 'foss',
+                  'language', 'tutorial', 'outline', 'status', 'user',
+                  'published_by', 'published_on', 'suggested_title', 'versionNo', 'editable')
