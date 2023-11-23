@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from rest_framework import serializers
 from .models import Script, ScriptDetail, Comment
+from .utils import is_published
 
 
 class ScriptDetailSerializer(serializers.ModelSerializer):
@@ -13,6 +14,7 @@ class ScriptDetailSerializer(serializers.ModelSerializer):
 class ScriptSerializer(serializers.ModelSerializer):
     slides = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
+    tut_is_published = serializers.SerializerMethodField()
 
     # def __init__(self, *args, **kwargs):
     #     remove_fields = kwargs.pop('remove_fields', None)
@@ -26,7 +28,7 @@ class ScriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Script
         fields = ('id', 'slides', 'status', 'tutorial', 'language',
-                  'suggested_title', 'versionNo', 'versions', 'editable')
+                  'suggested_title', 'versionNo', 'versions', 'editable', 'tut_is_published')
 
     def get_slides(self, instance):
         slides = []
@@ -61,6 +63,10 @@ class ScriptSerializer(serializers.ModelSerializer):
         for scr in scripts:
             versions.append(scr.versionNo)
         return versions
+
+    def get_tut_is_published(self, instance):
+        tut_is_published = is_published(instance.domain, instance.tutorial_id)
+        return tut_is_published
 
 
 class CommentSerializer(serializers.ModelSerializer):

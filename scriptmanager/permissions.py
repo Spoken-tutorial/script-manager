@@ -10,13 +10,12 @@ class ScriptOwnerPermission(IsAuthenticatedOrReadOnly):
         lid = view.kwargs['lid']
         tid = view.kwargs['tid']
         vid = view.kwargs['vid']
+        if Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid, status=True).exists():
+            return True
         if request.user.is_authenticated:
-            return Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid, status=True).exists() \
-                or is_Contributor(domain, fid, lid, request.user.username) \
+            return is_Contributor(domain, fid, lid, request.user.username) \
                 or is_DomainReviewer(domain, fid, lid, request.user.username) \
                 or is_QualityReviewer(domain, fid, lid, request.user.username)
-        if request.user.is_anonymous:
-            return Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid, status=True).exists()
         return False
 
     def has_object_permission(self, request, view, obj):
