@@ -20,7 +20,8 @@ from .permissions import is_DomainReviewer, is_QualityReviewer, ScriptOwnerPermi
         CanCommentPermission, CanRevisePermission
 from .serializers import ScriptDetailSerializer, ScriptSerializer, CommentSerializer, \
         ReversionSerializer, ScriptListSerializer
-from .utils import get_all_foss_languages, get_all_tutorials, get_tutorial_details
+from .utils import get_all_foss_languages, get_all_tutorials, get_tutorial_details, \
+        is_published
 
 
 def custom_jwt_payload_handler(user):
@@ -271,6 +272,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
                 if not is_DomainReviewer(domain, fid, lid, request.user.username) and not is_QualityReviewer(domain, fid, lid, request.user.username):
                     return Response({'message': 'You do not have review permission.'}, status=200)
                 status = request.data['status']
+                if not status and is_published(domain, tid):
+                    return Response({'message': 'You cannot unpublish a script which is part of a published tutorial.'}, status=200)
 
                 newVid = vid
                 if vid == 2 and status:
