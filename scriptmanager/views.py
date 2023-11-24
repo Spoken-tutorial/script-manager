@@ -170,23 +170,27 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         return Response(serialized.data, status=200)
 
     def create(self, request, fid, tid, lid, vid, domain):
+        fid = int(fid)
+        tid = int(tid)
+        lid = int(lid)
+        vid = int(vid)
         details = []
         create_request_type = request.data['type']
 
-        scripts = Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
+        scripts = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
         if not scripts.exists():
             tutorial = get_tutorial_details(domain, fid, lid, tid)
             script = Script.objects.create(
                 domain=domain,
                 foss=tutorial['foss'],
-                foss_id=int(fid),
+                foss_id=fid,
                 language=tutorial['language'],
-                language_id=int(lid),
+                language_id=lid,
                 tutorial=tutorial['tutorial']['tutorial'],
                 outline=tutorial['tutorial']['outline'],
-                tutorial_id=int(tid),
+                tutorial_id=tid,
                 user=self.request.user,
-                versionNo=int(vid),
+                versionNo=vid,
                 editable=True)
         else:
             script = scripts.first()
@@ -248,7 +252,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     def delete(self, request, fid, tid, lid, vid, domain):
         try:
-            script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
+            fid = int(fid)
+            tid = int(tid)
+            lid = int(lid)
+            vid = int(vid)
+            script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
+            if script.status and is_published(domain, tid):
+                return Response({'message': 'You cannot delete a script which is part of a published tutorial.'}, status=200)
             script.delete()
             return Response({'status': True}, status=202)
         except Exception:
