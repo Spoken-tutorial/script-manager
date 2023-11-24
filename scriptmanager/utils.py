@@ -62,6 +62,22 @@ def get_healthnutrition_tutorials_details(fid, lid, tid):
     return data
 
 
+def is_published(domain, tid):
+    is_published = None
+    if domain == "spokentutorials":
+        is_published = False
+    elif domain == "healthnutrition":
+        url = health_url + "checkTutorial/" + str(tid)
+        is_published = requests.get(url)
+        try:
+            is_published = is_published.json()['published']
+            print(f" TEST ********* is_published : {url} {is_published}")
+        except Exception as e:
+            print(f" EXCEPTION **** is_published : {url} {is_published} {e!s}")
+            is_published = is_published != 'true'
+    return is_published
+
+
 def get_all_foss_languages():
     spokentutorials = get_spokentutorials_foss()
     healthnuritions = get_healthnuritions_foss()

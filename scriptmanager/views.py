@@ -20,7 +20,8 @@ from .permissions import is_DomainReviewer, is_QualityReviewer, ScriptOwnerPermi
         CanCommentPermission, CanRevisePermission
 from .serializers import ScriptDetailSerializer, ScriptSerializer, CommentSerializer, \
         ReversionSerializer, ScriptListSerializer
-from .utils import get_all_foss_languages, get_all_tutorials, get_tutorial_details
+from .utils import get_all_foss_languages, get_all_tutorials, get_tutorial_details, \
+        is_published
 
 
 def custom_jwt_payload_handler(user):
@@ -169,23 +170,27 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         return Response(serialized.data, status=200)
 
     def create(self, request, fid, tid, lid, vid, domain):
+        fid = int(fid)
+        tid = int(tid)
+        lid = int(lid)
+        vid = int(vid)
         details = []
         create_request_type = request.data['type']
 
-        scripts = Script.objects.filter(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
+        scripts = Script.objects.filter(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
         if not scripts.exists():
             tutorial = get_tutorial_details(domain, fid, lid, tid)
             script = Script.objects.create(
                 domain=domain,
                 foss=tutorial['foss'],
-                foss_id=int(fid),
+                foss_id=fid,
                 language=tutorial['language'],
-                language_id=int(lid),
+                language_id=lid,
                 tutorial=tutorial['tutorial']['tutorial'],
                 outline=tutorial['tutorial']['outline'],
-                tutorial_id=int(tid),
+                tutorial_id=tid,
                 user=self.request.user,
-                versionNo=int(vid),
+                versionNo=vid,
                 editable=True)
         else:
             script = scripts.first()
@@ -247,7 +252,13 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
 
     def delete(self, request, fid, tid, lid, vid, domain):
         try:
-            script = Script.objects.get(domain=domain, foss_id=int(fid), language_id=int(lid), tutorial_id=int(tid), versionNo=int(vid))
+            fid = int(fid)
+            tid = int(tid)
+            lid = int(lid)
+            vid = int(vid)
+            script = Script.objects.get(domain=domain, foss_id=fid, language_id=lid, tutorial_id=tid, versionNo=vid)
+            if script.status and is_published(domain, tid):
+                return Response({'message': 'You cannot delete a script which is part of a published tutorial.'}, status=200)
             script.delete()
             return Response({'status': True}, status=202)
         except Exception:
@@ -271,6 +282,8 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
                 if not is_DomainReviewer(domain, fid, lid, request.user.username) and not is_QualityReviewer(domain, fid, lid, request.user.username):
                     return Response({'message': 'You do not have review permission.'}, status=200)
                 status = request.data['status']
+                if not status and is_published(domain, tid):
+                    return Response({'message': 'You cannot unpublish a script which is part of a published tutorial.'}, status=200)
 
                 newVid = vid
                 if vid == 2 and status:

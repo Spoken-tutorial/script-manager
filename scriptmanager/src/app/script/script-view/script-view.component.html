@@ -192,7 +192,7 @@
             </a>
           </div>
 
-          <div class="control" *ngIf="script?.status" [swal]="{ title: 'Unpublish Tutorial',
+          <div class="control" *ngIf="script?.status && !script.tut_is_published" [swal]="{ title: 'Unpublish Tutorial',
                 text: 'You are about to unpublish this tutorial. By doing this only the contributors and reviewers of the FOSS will be able to view and edit it. Are you sure?',
                 type: 'warning',
                 showCancelButton: 'true',
