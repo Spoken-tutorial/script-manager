@@ -23,13 +23,13 @@
 
       <ng-container *ngIf="!tutorial.published">
         <div class="control" *ngIf="!tutorial.script_status">
-          <a routerLink="/create/{{ tutorial.domain }}/{{ tutorial.fid }}/{{ tutorial.id }}/{{ tutorial.lid }}/{{ tutorial.tutorial }}/1">
+          <a routerLink="/create/{{ tutorial.domain }}/{{ tutorial.fid }}/{{ tutorial.id }}/{{ tutorial.lid }}/{{ tutorial.tutorial }}/2">
             <app-badge-button faClass="fa fa-plus" textClass="is-success" text="Create" textTooltip="Click here to create the script"></app-badge-button>
           </a>
         </div>
 
         <div class="control" *ngIf="!tutorial.script_status">
-          <a routerLink="/upload/{{ tutorial.domain }}/{{ tutorial.fid }}/{{ tutorial.id }}/{{ tutorial.lid }}/{{ tutorial.tutorial }}/1">
+          <a routerLink="/upload/{{ tutorial.domain }}/{{ tutorial.fid }}/{{ tutorial.id }}/{{ tutorial.lid }}/{{ tutorial.tutorial }}/2">
             <app-badge-button faClass="fa fa-upload" textClass="is-primary" text="Upload" textTooltip="Click here to upload the script"></app-badge-button>
           </a>
         </div>
