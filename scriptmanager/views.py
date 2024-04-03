@@ -219,6 +219,11 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
             data = request.data['details']
             details = self.scriptsData(data, script)
 
+        if len(details) == 0:
+            return Response({'status': False, 'message': 'No script found'}, status=200)
+        # Delete existing slides first
+        script_slides = ScriptDetail.objects.filter(script=script)
+        script_slides.delete()
         serialized = ScriptDetailSerializer(data=details, many=True)  # inserting a details array without iterating
 
         if serialized.is_valid():
