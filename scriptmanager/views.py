@@ -115,26 +115,30 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
         return str(soup)
 
     def scriptsData(self, html, script):
-        soup = BeautifulSoup(html, 'html.parser')
-        table = soup.find("table")
-        if table.find("tbody"):
-            table = table.find("tbody")
-        details = []
-        count = -1
-        for row in table.find_all('tr'):
-            if row.find_all("th"):
-                columns = row.find_all('th')
-            elif row.find_all('td'):
-                columns = row.find_all('td')
-            else:
-                continue
-            count += 1
-            try:
-                details.append({"order": count, "cue": self.getUlData(columns[0]), "narration": self.getUlData(columns[1]), "script": script.pk})
-            except Exception:
-                continue
-        details.pop(0)
-        return details
+        try:
+            soup = BeautifulSoup(html, 'html.parser')
+            table = soup.find("table")
+            if table.find("tbody"):
+                table = table.find("tbody")
+            details = []
+            count = -1
+            for row in table.find_all('tr'):
+                if row.find_all("th"):
+                    columns = row.find_all('th')
+                elif row.find_all('td'):
+                    columns = row.find_all('td')
+                else:
+                    continue
+                count += 1
+                try:
+                    details.append({"order": count, "cue": self.getUlData(columns[0]), "narration": self.getUlData(columns[1]), "script": script.pk})
+                except Exception:
+                    continue
+            details.pop(0)
+            return details
+        except Exception as e:
+            print('Exception in scriptsData', e)
+            raise e
 
     def get_queryset(self):
         try:
