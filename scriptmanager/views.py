@@ -213,7 +213,7 @@ class ScriptCreateAPIView(generics.ListCreateAPIView):
             # if subprocess.check_call('soffice --convert-to "html:XHTML Writer File:UTF8" ' + doc_file + ' --outdir media', shell=True) ==0:
             if subprocess.check_call('export HOME=/tmp && libreoffice --headless --convert-to html ' + doc_file + ' --outdir media', shell=True) == 0:
                 html_file = 'media/' + uid + ".html"
-                with open(html_file, 'r') as html:
+                with open(html_file, 'r', encoding='utf-8') as html:
                     details = self.scriptsData(html, script)
                 os.system('rm ' + doc_file + ' ' + html_file)
             else:
